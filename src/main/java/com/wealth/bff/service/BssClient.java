@@ -7,7 +7,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClient;
 
-import java.net.URI;
 
 @Component
 public class BssClient {
@@ -20,7 +19,7 @@ public class BssClient {
     }
 
     public String getSampleMessage() {
-        return restClient.get().uri("/internal/sample").retrieve().body(String.class);
+        return restClient.get().uri("/wealth-service/api/v1/internal/sample").retrieve().body(String.class);
     }
 
     public ResponseEntity<byte[]> forward(HttpMethod method, String path, HttpHeaders headers, byte[] body) {
