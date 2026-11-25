@@ -19,3 +19,12 @@ Spring Boot backend-for-frontend for the Wealth application.
 The `development` branch is the only branch intended for automatic Oracle Cloud development deployment. Production deployment from `main` is not configured.
 
 Do not commit secrets, database URLs, private keys, tokens, or personal financial data.
+
+
+## API routing
+
+- Frontend-facing base path: `/wealth/api/v1`.
+- The BFF forwards the original HTTP method, path suffix, query string, request body, cookies and authorization headers to BSS.
+- Internal BSS base path: `/wealth-service/api/v1`.
+- Configure the BSS origin with `WEALTH_BSS_BASE_URL` (for example, the private service URL). The BFF returns upstream status, response body and response headers, including session cookies.
+- Business rules and persistence belong in BSS; BFF is a compatibility and orchestration boundary only.
