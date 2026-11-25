@@ -72,6 +72,8 @@ jobs:
         uses: appleboy/ssh-action@v1.2.2
         env:
           IMAGE: ghcr.io/${{ github.repository }}:${{ github.sha }}
+          REGISTRY_USER: ${{ github.actor }}
+          REGISTRY_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SPRING_PROFILES_ACTIVE: dev
           WEALTH_BSS_BASE_URL: http://127.0.0.1:8080
         with:
@@ -79,9 +81,10 @@ jobs:
           username: ${{ secrets.ORACLE_USER }}
           key: ${{ secrets.ORACLE_SSH_KEY }}
           fingerprint: ${{ secrets.ORACLE_HOST_FINGERPRINT }}
-          envs: IMAGE,SPRING_PROFILES_ACTIVE,WEALTH_BSS_BASE_URL
+          envs: IMAGE,REGISTRY_USER,REGISTRY_TOKEN,SPRING_PROFILES_ACTIVE,WEALTH_BSS_BASE_URL
           script: |
             set -eu
+            echo "$REGISTRY_TOKEN" | sudo docker login ghcr.io -u "$REGISTRY_USER" --password-stdin
             sudo docker pull "$IMAGE"
             sudo docker rm -f wealth-bff 2>/dev/null || true
             sudo docker run -d --name wealth-bff --restart unless-stopped --network host --memory=256m --cpus=0.5 -e SPRING_PROFILES_ACTIVE="$SPRING_PROFILES_ACTIVE" -e SERVER_PORT=8081 -e WEALTH_BSS_BASE_URL="$WEALTH_BSS_BASE_URL" -e JAVA_TOOL_OPTIONS="-Xms64m -Xmx192m" "$IMAGE"

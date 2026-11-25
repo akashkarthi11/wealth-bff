@@ -28,3 +28,9 @@ Do not commit secrets, database URLs, private keys, tokens, or personal financia
 - Internal BSS base path: `/wealth-service/api/v1`.
 - Configure the BSS origin with `WEALTH_BSS_BASE_URL` (for example, the private service URL). The BFF returns upstream status, response body and response headers, including session cookies.
 - Business rules and persistence belong in BSS; BFF is a compatibility and orchestration boundary only.
+
+## Status (2026-11-25)
+
+Configuration only: the application class, `common/config/DataSourceConfig`, `application.yml`, and Actuator `/actuator/health`.
+The forwarding proxy (`WealthApiProxyController`, `BssClient`) and every other controller and implementation class were removed on the
+owner's request. The routing described above is the intended design, not current behaviour.
