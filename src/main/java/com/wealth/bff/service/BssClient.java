@@ -7,7 +7,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClient;
 
-import java.io.IOException;
 import java.net.URI;
 
 @Component
@@ -24,16 +23,17 @@ public class BssClient {
         return restClient.get().uri("/internal/sample").retrieve().body(String.class);
     }
 
-    public ResponseEntity<byte[]> forward(HttpMethod method, URI path, HttpHeaders headers, byte[] body) {
-        return restClient.method(method)
+    public ResponseEntity<byte[]> forward(HttpMethod method, String path, HttpHeaders headers, byte[] body) {
+        RestClient.RequestBodySpec spec = restClient.method(method)
             .uri(path)
-            .headers(outgoing -> outgoing.addAll(headers))
-            .body(body == null ? new byte[0] : body)
-            .exchange((request, response) -> {
-                HttpHeaders responseHeaders = new HttpHeaders();
-                responseHeaders.putAll(response.getHeaders());
-                byte[] responseBody = response.getBody().readAllBytes();
-                return new ResponseEntity<>(responseBody, responseHeaders, response.getStatusCode());
-            });
+            .headers(outgoing -> outgoing.addAll(headers));
+        if (body != null && body.length > 0) spec.body(body);
+        return spec.exchange((request, response) -> {
+            HttpHeaders responseHeaders = new HttpHeaders();
+            responseHeaders.putAll(response.getHeaders());
+            responseHeaders.remove(HttpHeaders.TRANSFER_ENCODING);
+            byte[] responseBody = response.getBody().readAllBytes();
+            return new ResponseEntity<>(responseBody, responseHeaders, response.getStatusCode());
+        });
     }
 }
