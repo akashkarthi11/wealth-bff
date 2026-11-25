@@ -40,3 +40,53 @@ jobs:
           platforms: linux/amd64
           push: true
           tags: ghcr.io/${{ github.repository }}:development
+
+  deploy:
+    needs: build
+    if: github.event_name == 'push' && github.ref == 'refs/heads/development'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Verify configured SSH host fingerprint
+        env:
+          CONFIGURED_FINGERPRINT: ${{ secrets.ORACLE_HOST_FINGERPRINT }}
+        run: |
+          EXPECTED_FINGERPRINT='SHA256:D4qwc2obm5GrMxueJhxpoE0fmDmdYDUnXPwAzmpispQ'
+          if [ "$CONFIGURED_FINGERPRINT" = "$EXPECTED_FINGERPRINT" ]; then
+            echo "SSH fingerprint secret exactly matches the verified ECDSA host key."
+          else
+            echo "::error::ORACLE_HOST_FINGERPRINT does not exactly match the verified ECDSA host key."
+            exit 1
+          fi
+      - name: Deploy BFF to Oracle VM with health check and rollback
+        uses: appleboy/ssh-action@v1.2.2
+        env:
+          IMAGE: ghcr.io/${{ github.repository }}:${{ github.sha }}
+        with:
+          host: ${{ secrets.ORACLE_HOST }}
+          username: ${{ secrets.ORACLE_USER }}
+          key: ${{ secrets.ORACLE_SSH_KEY }}
+          fingerprint: ${{ secrets.ORACLE_HOST_FINGERPRINT }}
+          envs: IMAGE
+          script: |
+            set -eu
+            PREVIOUS_IMAGE_ID=$(sudo docker inspect --format='{{.Image}}' wealth-bff 2>/dev/null || true)
+            sudo docker pull "$IMAGE"
+            sudo docker rm -f wealth-bff 2>/dev/null || true
+            sudo docker run -d --name wealth-bff --restart unless-stopped --network host --memory=256m --cpus=0.5 -e SERVER_PORT=8081 -e WEALTH_BSS_BASE_URL=http://127.0.0.1:8080 -e JAVA_TOOL_OPTIONS="-Xms64m -Xmx192m" "$IMAGE"
+
+            for attempt in $(seq 1 90); do
+              if curl --connect-timeout 3 --max-time 5 -fsS http://127.0.0.1:8081/actuator/health; then
+                echo "BFF deployment healthy: $IMAGE"
+                exit 0
+              fi
+              sleep 2
+            done
+
+            echo "New BFF deployment failed health check after 180 seconds; recent container logs:"
+            sudo docker logs --tail 120 wealth-bff || true
+            echo "Rolling back to previous image"
+            sudo docker rm -f wealth-bff 2>/dev/null || true
+            if [ -n "$PREVIOUS_IMAGE_ID" ]; then
+              sudo docker run -d --name wealth-bff --restart unless-stopped --network host --memory=256m --cpus=0.5 -e SERVER_PORT=8081 -e WEALTH_BSS_BASE_URL=http://127.0.0.1:8080 -e JAVA_TOOL_OPTIONS="-Xms64m -Xmx192m" "$PREVIOUS_IMAGE_ID"
+            fi
+            exit 1
