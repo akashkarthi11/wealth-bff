@@ -8,7 +8,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.net.URI;
 import java.util.Enumeration;
 import java.util.Set;
 
@@ -52,7 +51,7 @@ public class WealthApiProxyController {
 
         byte[] body = request.getInputStream().readAllBytes();
         try {
-            return bssClient.forward(HttpMethod.valueOf(request.getMethod()), URI.create(target), headers, body);
+            return bssClient.forward(HttpMethod.valueOf(request.getMethod()), target, headers, body);
         } catch (org.springframework.web.client.RestClientException ex) {
             return ResponseEntity.status(502)
                 .header(HttpHeaders.CONTENT_TYPE, "application/json")
