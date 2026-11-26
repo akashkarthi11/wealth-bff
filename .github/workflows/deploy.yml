@@ -1,9 +1,7 @@
 name: Deploy BFF to server 65
 
 on:
-  workflow_run:
-    workflows: ["Build, test and publish AMD64 image (no deploy)"]
-    types: [completed]
+  push:
     branches: [development]
   workflow_dispatch:
 
@@ -16,12 +14,9 @@ concurrency:
 
 jobs:
   deploy:
-    if: github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-        with:
-          ref: ${{ github.event.workflow_run.head_sha || github.sha }}
       - uses: actions/checkout@v4
         with:
           repository: akashkarthi11/wealth-common
@@ -34,8 +29,8 @@ jobs:
           cache: maven
       - name: Install shared library from source
         run: mvn -B -f wealth-common/pom.xml install -DskipTests
-      - name: Package jar
-        run: mvn -B -DskipTests package
+      - name: Build and test (deploy stops here if tests fail)
+        run: mvn -B clean verify
       - name: Prepare SSH
         run: |
           install -m 700 -d ~/.ssh
