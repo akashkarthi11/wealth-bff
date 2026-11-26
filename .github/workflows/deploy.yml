@@ -1,3 +1,4 @@
+# Deploys the BFF jar to server 65 (port 8080) over SSH. Needs the four SERVER_* secrets.
 name: Deploy BFF to server 65
 
 on:
