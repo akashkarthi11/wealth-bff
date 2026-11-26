@@ -1,0 +1,150 @@
+{
+  "info": {
+    "name": "Wealth API (BFF and BSS)",
+    "description": "Wealth BFF routes under /wealth/api/v1 (what the UI calls) and the BSS routes under /wealth-service/api/v1 (debug only; only the BFF should call the BSS).\n\nSet the collection variables: bffUrl, bssUrl, email, password, secretKey. Run Login first: its test script saves the token into {{token}}.\n\nbffUrl: local http://localhost:8080, Oracle VM http://140.245.251.65\nbssUrl: local http://localhost:8081, live https://speeds-unto-portland-experienced.trycloudflare.com\n\nPassword rules: 10 to 200 characters. Email: valid address, at most 254 characters.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    { "key": "bffUrl", "value": "http://localhost:8080" },
+    { "key": "bssUrl", "value": "http://localhost:8081" },
+    { "key": "email", "value": "user@example.com" },
+    { "key": "password", "value": "change-me-please-123" },
+    { "key": "newPassword", "value": "change-me-please-456" },
+    { "key": "secretKey", "value": "" },
+    { "key": "token", "value": "" }
+  ],
+  "item": [
+    {
+      "name": "BFF (/wealth/api/v1)",
+      "item": [
+        {
+          "name": "Health: bff, bss, db, redis",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": { "raw": "{{bffUrl}}/wealth/api/v1/health", "host": ["{{bffUrl}}"], "path": ["wealth", "api", "v1", "health"] },
+            "description": "Public. Returns {\"bff\":\"UP\",\"bss\":\"UP\",\"db\":\"UP\",\"redis\":\"UP\"}. bss is DOWN when the BFF cannot reach the BSS."
+          },
+          "event": [{ "listen": "test", "script": { "type": "text/javascript", "exec": ["pm.test('200', () => pm.response.to.have.status(200));", "pm.test('BSS up', () => pm.expect(pm.response.json().bss).to.eql('UP'));"] } }]
+        },
+        {
+          "name": "Actuator health",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": { "raw": "{{bffUrl}}/actuator/health", "host": ["{{bffUrl}}"], "path": ["actuator", "health"] },
+            "description": "Public. The BFF itself only. The base URL without a path returns 401."
+          }
+        },
+        {
+          "name": "Login",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"email\": \"{{email}}\",\n  \"password\": \"{{password}}\"\n}" },
+            "url": { "raw": "{{bffUrl}}/wealth/api/v1/customers/users/login", "host": ["{{bffUrl}}"], "path": ["wealth", "api", "v1", "customers", "users", "login"] },
+            "description": "Public. Returns data.token (RS256 JWT), data.expiresIn and data.user. A refused business rule returns HTTP 202 with status 0 and an errorCode."
+          },
+          "event": [{ "listen": "test", "script": { "type": "text/javascript", "exec": ["const body = pm.response.json();", "if (body && body.data && body.data.token) { pm.collectionVariables.set('token', body.data.token); }", "pm.test('signed in', () => pm.expect(body.data && body.data.token).to.be.ok);"] } }]
+        },
+        {
+          "name": "Register",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"email\": \"{{email}}\",\n  \"password\": \"{{password}}\",\n  \"secretKey\": \"{{secretKey}}\"\n}" },
+            "url": { "raw": "{{bffUrl}}/wealth/api/v1/customers/users/register", "host": ["{{bffUrl}}"], "path": ["wealth", "api", "v1", "customers", "users", "register"] },
+            "description": "Public, guarded by the owner's secret key (WEALTH_ACCESS_KEY). Refused when no key is configured. Returns the same shape as Login."
+          },
+          "event": [{ "listen": "test", "script": { "type": "text/javascript", "exec": ["const body = pm.response.json();", "if (body && body.data && body.data.token) { pm.collectionVariables.set('token', body.data.token); }"] } }]
+        },
+        {
+          "name": "Me",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": { "raw": "{{bffUrl}}/wealth/api/v1/customers/users/me", "host": ["{{bffUrl}}"], "path": ["wealth", "api", "v1", "customers", "users", "me"] },
+            "description": "Needs the token. Returns the signed-in user (id, email, role, menus). 401 with an empty body for a missing, wrong or outdated token."
+          }
+        },
+        {
+          "name": "Logout",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": { "raw": "{{bffUrl}}/wealth/api/v1/customers/users/logout", "host": ["{{bffUrl}}"], "path": ["wealth", "api", "v1", "customers", "users", "logout"] },
+            "description": "Needs the token. Drops the cached user. Returns data: true."
+          }
+        },
+        {
+          "name": "Reset password (admin)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }, { "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"email\": \"{{email}}\",\n  \"newPassword\": \"{{newPassword}}\"\n}" },
+            "url": { "raw": "{{bffUrl}}/wealth/api/v1/customers/users/password/reset", "host": ["{{bffUrl}}"], "path": ["wealth", "api", "v1", "customers", "users", "password", "reset"] },
+            "description": "Admin token only. Sets a new password, bumps the user's session version, so every older token of that user stops working."
+          }
+        }
+      ]
+    },
+    {
+      "name": "BSS direct (/wealth-service/api/v1), debug only",
+      "item": [
+        {
+          "name": "Actuator health (db, redis)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": { "raw": "{{bssUrl}}/actuator/health", "host": ["{{bssUrl}}"], "path": ["actuator", "health"] },
+            "description": "Public. Shows status plus db and redis components."
+          }
+        },
+        {
+          "name": "Login",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"email\": \"{{email}}\",\n  \"password\": \"{{password}}\"\n}" },
+            "url": { "raw": "{{bssUrl}}/wealth-service/api/v1/customers/users/login", "host": ["{{bssUrl}}"], "path": ["wealth-service", "api", "v1", "customers", "users", "login"] }
+          },
+          "event": [{ "listen": "test", "script": { "type": "text/javascript", "exec": ["const body = pm.response.json();", "if (body && body.data && body.data.token) { pm.collectionVariables.set('token', body.data.token); }"] } }]
+        },
+        {
+          "name": "Register",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"email\": \"{{email}}\",\n  \"password\": \"{{password}}\",\n  \"secretKey\": \"{{secretKey}}\"\n}" },
+            "url": { "raw": "{{bssUrl}}/wealth-service/api/v1/customers/users/register", "host": ["{{bssUrl}}"], "path": ["wealth-service", "api", "v1", "customers", "users", "register"] }
+          }
+        },
+        {
+          "name": "Me",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": { "raw": "{{bssUrl}}/wealth-service/api/v1/customers/users/me", "host": ["{{bssUrl}}"], "path": ["wealth-service", "api", "v1", "customers", "users", "me"] }
+          }
+        },
+        {
+          "name": "Logout",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": { "raw": "{{bssUrl}}/wealth-service/api/v1/customers/users/logout", "host": ["{{bssUrl}}"], "path": ["wealth-service", "api", "v1", "customers", "users", "logout"] }
+          }
+        },
+        {
+          "name": "Reset password (admin)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }, { "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"email\": \"{{email}}\",\n  \"newPassword\": \"{{newPassword}}\"\n}" },
+            "url": { "raw": "{{bssUrl}}/wealth-service/api/v1/customers/users/password/reset", "host": ["{{bssUrl}}"], "path": ["wealth-service", "api", "v1", "customers", "users", "password", "reset"] }
+          }
+        }
+      ]
+    }
+  ]
+}

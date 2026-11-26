@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import com.wealth.bff.constants.WealthConstants;
 import com.wealth.common.generic.ApiResponse;
 import com.wealth.common.generic.KarthiException;
 import com.wealth.common.model.dto.customer.LoginRequestDto;
@@ -14,29 +15,30 @@ import com.wealth.common.model.dto.customer.PasswordResetRequestDto;
 import com.wealth.common.model.dto.customer.RegisterRequestDto;
 import com.wealth.common.model.dto.customer.UserDto;
 
-@RequestMapping("/wealth/api/v1/customers/users")
+@RequestMapping(WealthConstants.USERS_BASE)
 public interface IfCustomerUserContract {
 
 	// Public: no token yet.
-	@PostMapping("/login")
+	@PostMapping(WealthConstants.LOGIN)
 	ResponseEntity<ApiResponse<LoginResponseDto, Void>> login(@RequestBody LoginRequestDto request)
 			throws KarthiException;
 
 	// Public: guarded by the secret key, checked in the BSS.
-	@PostMapping("/register")
+	@PostMapping(WealthConstants.REGISTER)
 	ResponseEntity<ApiResponse<LoginResponseDto, Void>> register(@RequestBody RegisterRequestDto request)
 			throws KarthiException;
 
-	@PostMapping("/me")
-	ResponseEntity<ApiResponse<UserDto, Void>> me(@RequestHeader("Authorization") String authorization)
+	@PostMapping(WealthConstants.ME)
+	ResponseEntity<ApiResponse<UserDto, Void>> me(@RequestHeader(WealthConstants.HEADER_AUTHORIZATION) String authorization)
 			throws KarthiException;
 
-	@PostMapping("/logout")
-	ResponseEntity<ApiResponse<Boolean, Void>> logout(@RequestHeader("Authorization") String authorization)
-			throws KarthiException;
+	@PostMapping(WealthConstants.LOGOUT)
+	ResponseEntity<ApiResponse<Boolean, Void>> logout(
+			@RequestHeader(WealthConstants.HEADER_AUTHORIZATION) String authorization) throws KarthiException;
 
 	// Admin only, decided in the BSS.
-	@PostMapping("/password/reset")
-	ResponseEntity<ApiResponse<Boolean, Void>> resetPassword(@RequestHeader("Authorization") String authorization,
+	@PostMapping(WealthConstants.PASSWORD_RESET)
+	ResponseEntity<ApiResponse<Boolean, Void>> resetPassword(
+			@RequestHeader(WealthConstants.HEADER_AUTHORIZATION) String authorization,
 			@RequestBody PasswordResetRequestDto request) throws KarthiException;
 }
