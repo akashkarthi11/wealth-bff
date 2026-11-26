@@ -1,0 +1,71 @@
+name: Deploy BFF to server 65
+
+on:
+  workflow_run:
+    workflows: ["Build, test and publish AMD64 image (no deploy)"]
+    types: [completed]
+    branches: [development]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: deploy-bff
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    if: github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.workflow_run.head_sha || github.sha }}
+      - uses: actions/checkout@v4
+        with:
+          repository: akashkarthi11/wealth-common
+          ref: development
+          path: wealth-common
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+          cache: maven
+      - name: Install shared library from source
+        run: mvn -B -f wealth-common/pom.xml install -DskipTests
+      - name: Package jar
+        run: mvn -B -DskipTests package
+      - name: Prepare SSH
+        run: |
+          install -m 700 -d ~/.ssh
+          printf '%s\n' "${{ secrets.SERVER_SSH_KEY }}" > ~/.ssh/deploy_key
+          chmod 600 ~/.ssh/deploy_key
+          printf '%s\n' "${{ secrets.SERVER_KNOWN_HOSTS }}" > ~/.ssh/known_hosts
+      - name: Upload jar
+        run: |
+          scp -i ~/.ssh/deploy_key -o StrictHostKeyChecking=yes -o BatchMode=yes \
+            target/wealth-bff-0.1.0-SNAPSHOT.jar \
+            "${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }}:/tmp/bff.new.jar"
+      - name: Install, restart on 8080 and verify
+        run: |
+          ssh -i ~/.ssh/deploy_key -o StrictHostKeyChecking=yes -o BatchMode=yes \
+            "${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }}" 'bash -s' <<'REMOTE'
+          set -u
+          JAR=/opt/wealth/bff.jar
+          sudo cp -p "$JAR" "$JAR.prev"
+          sudo install -o wealth -g wealth -m 644 /tmp/bff.new.jar "$JAR"
+          rm -f /tmp/bff.new.jar
+          sudo systemctl restart wealth-bff
+          for i in $(seq 1 60); do
+            [ "$(curl -s -o /dev/null -w '%{http_code}' http://localhost:8080/actuator/health)" = 200 ] && { echo "wealth-bff is UP on 8080"; exit 0; }
+            sleep 3
+          done
+          echo "health check failed, rolling back"
+          sudo cp -p "$JAR.prev" "$JAR"
+          sudo systemctl restart wealth-bff
+          exit 1
+          REMOTE
+      - name: Remove SSH material
+        if: always()
+        run: rm -f ~/.ssh/deploy_key ~/.ssh/known_hosts
