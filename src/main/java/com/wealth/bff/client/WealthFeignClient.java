@@ -15,6 +15,7 @@ import com.wealth.common.generic.ApiResponse;
 import com.wealth.common.model.dto.AccountIdRequestDto;
 import com.wealth.common.model.dto.IdRequestDto;
 import com.wealth.common.model.dto.account.AccountDetailDto;
+import com.wealth.common.model.dto.invest.InvestmentsDto;
 import com.wealth.common.model.dto.account.AccountSplitDto;
 import com.wealth.common.model.dto.account.AccountSubtypeDto;
 import com.wealth.common.model.dto.account.AccountsOverviewDto;
@@ -190,6 +191,11 @@ public interface WealthFeignClient {
 
 	@PostMapping(WealthConstants.BSS_ACCOUNTS_BASE + WealthConstants.ACCOUNTS_LIST)
 	ResponseEntity<ApiResponse<AccountsOverviewDto, Void>> accountsList(
+			@RequestHeader(WealthConstants.HEADER_AUTHORIZATION) String authorization,
+			@RequestHeader(value = WealthConstants.HEADER_FORWARDED_FOR, required = false) String ip);
+
+	@PostMapping(WealthConstants.BSS_INVESTMENTS_BASE + WealthConstants.INVESTMENTS_LIST)
+	ResponseEntity<ApiResponse<InvestmentsDto, Void>> investmentsList(
 			@RequestHeader(WealthConstants.HEADER_AUTHORIZATION) String authorization,
 			@RequestHeader(value = WealthConstants.HEADER_FORWARDED_FOR, required = false) String ip);
 

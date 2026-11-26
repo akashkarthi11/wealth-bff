@@ -86,6 +86,9 @@ public final class WealthConstants {
 	public static final String ACCOUNTS_DETAIL = "/detail";
 	public static final String ACCOUNTS_SUBTYPES = "/subtypes";
 	public static final String ACCOUNTS_SPLITS_LIST = "/splits/list";
+	public static final String INVESTMENTS_BASE = API_BASE + "/investments";
+	public static final String BSS_INVESTMENTS_BASE = "/wealth-service/api/v1/investments";
+	public static final String INVESTMENTS_LIST = "/list";
 
 	// Edge limits for the admin requests.
 	public static final int MENU_KEY_MAX_LENGTH = 30;
