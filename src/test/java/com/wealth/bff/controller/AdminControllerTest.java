@@ -23,7 +23,6 @@ import com.wealth.common.generic.BaseError;
 import com.wealth.common.generic.KarthiException;
 import com.wealth.common.model.dto.admin.RecordsRequestDto;
 import com.wealth.common.model.dto.admin.RoleMenusDto;
-import com.wealth.common.model.dto.admin.RoleMenusRequestDto;
 import com.wealth.common.model.dto.admin.RolesOverviewDto;
 import com.wealth.common.model.dto.admin.SnapshotDto;
 import com.wealth.common.utils.generic.RequestHeaderUtil;
@@ -45,8 +44,8 @@ class AdminControllerTest {
 		RequestHeaderUtil.clear();
 	}
 
-	private RoleMenusRequestDto request(String role, String... menus) {
-		RoleMenusRequestDto r = new RoleMenusRequestDto();
+	private RoleMenusDto request(String role, String... menus) {
+		RoleMenusDto r = new RoleMenusDto();
 		r.setRole(role);
 		r.setMenus(List.of(menus));
 		return r;
@@ -65,7 +64,7 @@ class AdminControllerTest {
 
 	@Test
 	void updateMenusIsCheckedAtTheEdgeThenForwarded() {
-		RoleMenusRequestDto ok = request("user", "overview", "banks");
+		RoleMenusDto ok = request("user", "overview", "banks");
 		when(feign.adminUpdateRoleMenus("Bearer t", "203.0.113.5", ok)).thenReturn(ResponseEntity.ok(new ApiResponse<RoleMenusDto, Void>()));
 		assertEquals(HttpStatus.OK, controller.updateRoleMenus("Bearer t", ok).getStatusCode());
 		verify(feign).adminUpdateRoleMenus("Bearer t", "203.0.113.5", ok);

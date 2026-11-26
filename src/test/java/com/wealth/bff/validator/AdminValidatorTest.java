@@ -11,12 +11,12 @@ import org.junit.jupiter.api.Test;
 
 import com.wealth.bff.constants.WealthConstants;
 import com.wealth.common.generic.KarthiException;
-import com.wealth.common.model.dto.admin.RoleMenusRequestDto;
+import com.wealth.common.model.dto.admin.RoleMenusDto;
 
 class AdminValidatorTest {
 
-	private RoleMenusRequestDto request(String role, List<String> menus) {
-		RoleMenusRequestDto r = new RoleMenusRequestDto();
+	private RoleMenusDto request(String role, List<String> menus) {
+		RoleMenusDto r = new RoleMenusDto();
 		r.setRole(role);
 		r.setMenus(menus);
 		return r;

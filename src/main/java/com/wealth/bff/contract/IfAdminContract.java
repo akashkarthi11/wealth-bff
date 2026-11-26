@@ -12,8 +12,11 @@ import com.wealth.bff.constants.WealthConstants;
 import com.wealth.common.generic.ApiResponse;
 import com.wealth.common.generic.KarthiException;
 import com.wealth.common.model.dto.admin.RecordsRequestDto;
+import com.wealth.common.model.dto.admin.RoleCreateRequestDto;
+import com.wealth.common.model.dto.admin.RoleDto;
+import com.wealth.common.model.dto.admin.UserAccessDto;
+import com.wealth.common.model.dto.admin.UserRoleRequestDto;
 import com.wealth.common.model.dto.admin.RoleMenusDto;
-import com.wealth.common.model.dto.admin.RoleMenusRequestDto;
 import com.wealth.common.model.dto.admin.RolesOverviewDto;
 import com.wealth.common.model.dto.admin.SnapshotDto;
 
@@ -27,8 +30,20 @@ public interface IfAdminContract {
 
 	@PostMapping(WealthConstants.ROLES_UPDATE_MENUS)
 	ResponseEntity<ApiResponse<RoleMenusDto, Void>> updateRoleMenus(
-			@RequestHeader(WealthConstants.HEADER_AUTHORIZATION) String authorization, @RequestBody RoleMenusRequestDto request)
+			@RequestHeader(WealthConstants.HEADER_AUTHORIZATION) String authorization, @RequestBody RoleMenusDto request)
 			throws KarthiException;
+
+	@PostMapping(WealthConstants.ROLES_CREATE)
+	ResponseEntity<ApiResponse<RoleDto, Void>> createRole(@RequestHeader(WealthConstants.HEADER_AUTHORIZATION) String authorization,
+			@RequestBody RoleCreateRequestDto request) throws KarthiException;
+
+	@PostMapping(WealthConstants.USERS_LIST)
+	ResponseEntity<ApiResponse<List<UserAccessDto>, Void>> usersList(@RequestHeader(WealthConstants.HEADER_AUTHORIZATION) String authorization)
+			throws KarthiException;
+
+	@PostMapping(WealthConstants.USERS_SET_ROLE)
+	ResponseEntity<ApiResponse<UserAccessDto, Void>> setUserRole(@RequestHeader(WealthConstants.HEADER_AUTHORIZATION) String authorization,
+			@RequestBody UserRoleRequestDto request) throws KarthiException;
 
 	@PostMapping(WealthConstants.RECORDS_LIST)
 	ResponseEntity<ApiResponse<List<SnapshotDto>, Void>> recordsList(
