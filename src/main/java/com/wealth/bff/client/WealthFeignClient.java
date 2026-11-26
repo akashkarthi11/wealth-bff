@@ -1,5 +1,6 @@
 package com.wealth.bff.client;
 
+import java.util.List;
 import java.util.Map;
 
 import org.springframework.cloud.openfeign.FeignClient;
@@ -11,6 +12,11 @@ import org.springframework.web.bind.annotation.RequestHeader;
 
 import com.wealth.bff.constants.WealthConstants;
 import com.wealth.common.generic.ApiResponse;
+import com.wealth.common.model.dto.admin.RecordsRequestDto;
+import com.wealth.common.model.dto.admin.RoleMenusDto;
+import com.wealth.common.model.dto.admin.RoleMenusRequestDto;
+import com.wealth.common.model.dto.admin.RolesOverviewDto;
+import com.wealth.common.model.dto.admin.SnapshotDto;
 import com.wealth.common.model.dto.customer.LoginRequestDto;
 import com.wealth.common.model.dto.customer.LoginResponseDto;
 import com.wealth.common.model.dto.customer.PasswordResetRequestDto;
@@ -49,4 +55,21 @@ public interface WealthFeignClient {
 			@RequestHeader(WealthConstants.HEADER_AUTHORIZATION) String authorization,
 			@RequestHeader(value = WealthConstants.HEADER_FORWARDED_FOR, required = false) String ip,
 			@RequestBody PasswordResetRequestDto request);
+
+	@PostMapping(WealthConstants.BSS_ADMIN_BASE + WealthConstants.ROLES_LIST)
+	ResponseEntity<ApiResponse<RolesOverviewDto, Void>> adminRolesList(
+			@RequestHeader(WealthConstants.HEADER_AUTHORIZATION) String authorization,
+			@RequestHeader(value = WealthConstants.HEADER_FORWARDED_FOR, required = false) String ip);
+
+	@PostMapping(WealthConstants.BSS_ADMIN_BASE + WealthConstants.ROLES_UPDATE_MENUS)
+	ResponseEntity<ApiResponse<RoleMenusDto, Void>> adminUpdateRoleMenus(
+			@RequestHeader(WealthConstants.HEADER_AUTHORIZATION) String authorization,
+			@RequestHeader(value = WealthConstants.HEADER_FORWARDED_FOR, required = false) String ip,
+			@RequestBody RoleMenusRequestDto request);
+
+	@PostMapping(WealthConstants.BSS_ADMIN_BASE + WealthConstants.RECORDS_LIST)
+	ResponseEntity<ApiResponse<List<SnapshotDto>, Void>> adminRecordsList(
+			@RequestHeader(WealthConstants.HEADER_AUTHORIZATION) String authorization,
+			@RequestHeader(value = WealthConstants.HEADER_FORWARDED_FOR, required = false) String ip,
+			@RequestBody(required = false) RecordsRequestDto request);
 }

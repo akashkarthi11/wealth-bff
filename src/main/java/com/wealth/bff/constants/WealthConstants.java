@@ -24,6 +24,19 @@ public final class WealthConstants {
 	public static final String LOGOUT = "/logout";
 	public static final String PASSWORD_RESET = "/password/reset";
 
+	// Admin module: BFF paths, the BSS paths they call, and the action paths (same on both).
+	public static final String ADMIN_BASE = API_BASE + "/admin";
+	public static final String BSS_ADMIN_BASE = "/wealth-service/api/v1/admin";
+	public static final String ROLES_LIST = "/roles/list";
+	public static final String ROLES_UPDATE_MENUS = "/roles/update-menus";
+	public static final String RECORDS_LIST = "/records/list";
+
+	// Edge limits for the admin requests.
+	public static final int MENU_KEY_MAX_LENGTH = 30;
+	public static final int MENUS_MAX = 50;
+	public static final int ROLE_MAX_LENGTH = 30;
+	public static final int SEARCH_MAX_LENGTH = 100;
+
 	public static final String HEADER_AUTHORIZATION = "Authorization";
 	public static final String HEADER_FORWARDED_FOR = "X-Forwarded-For";
 

@@ -17,7 +17,7 @@ import com.wealth.common.model.dto.customer.UserDto;
 import com.wealth.common.utils.generic.RequestHeaderUtil;
 
 @RestController
-public class CustomerUserController implements IfCustomerUserContract {
+public class CustomerUserController extends WealthBaseController implements IfCustomerUserContract {
 
 	private static final KarthiLogger LOGGER = new KarthiLogger(CustomerUserController.class);
 
@@ -62,8 +62,4 @@ public class CustomerUserController implements IfCustomerUserContract {
 		return handleResponse(feignClient.resetPassword(authorization, RequestHeaderUtil.getIp(), request));
 	}
 
-	private static <T> ResponseEntity<ApiResponse<T, Void>> handleResponse(
-			ResponseEntity<ApiResponse<T, Void>> response) {
-		return ResponseEntity.status(response.getStatusCode()).body(response.getBody());
-	}
 }
