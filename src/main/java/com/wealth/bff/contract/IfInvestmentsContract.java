@@ -14,6 +14,9 @@ import com.wealth.common.model.dto.invest.InvestmentsDto;
 @RequestMapping(WealthConstants.INVESTMENTS_BASE)
 public interface IfInvestmentsContract {
 
+	@PostMapping(WealthConstants.INVESTMENTS_REFRESH)
+	ResponseEntity<ApiResponse<InvestmentsDto, Void>> refresh(@RequestHeader(WealthConstants.HEADER_AUTHORIZATION) String authorization) throws KarthiException;
+
 	@PostMapping(WealthConstants.INVESTMENTS_LIST)
 	ResponseEntity<ApiResponse<InvestmentsDto, Void>> list(@RequestHeader(WealthConstants.HEADER_AUTHORIZATION) String authorization) throws KarthiException;
 }

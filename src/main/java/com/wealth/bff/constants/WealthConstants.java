@@ -52,9 +52,12 @@ public final class WealthConstants {
 	public static final String ENV_REDIS_GET = "/redis/get";
 	public static final String ENV_REDIS_UPDATE = "/redis/update";
 	public static final String ENV_REDIS_RESET = "/redis/reset";
+	public static final String ENV_REDIS_ACTIVE = "/redis/active";
 	public static final String ENV_KAFKA_GET = "/kafka/get";
 	public static final String ENV_KAFKA_UPDATE = "/kafka/update";
 	public static final String ENV_KAFKA_RESET = "/kafka/reset";
+	public static final String ENV_KAFKA_ACTIVE = "/kafka/active";
+	public static final String ENV_KAFKA_REFRESH = "/kafka/refresh-time";
 	public static final String ENV_POSTGRES_GET = "/postgres/get";
 	public static final String ENV_POSTGRES_UPDATE = "/postgres/update";
 	public static final String ENV_POSTGRES_RESET = "/postgres/reset";
@@ -62,6 +65,20 @@ public final class WealthConstants {
 	public static final String MENUS_BASE = API_BASE + "/menus";
 	public static final String BSS_MENUS_BASE = "/wealth-service/api/v1/menus";
 	public static final String MENUS_LIST = "/list";
+	public static final String API_USAGE_BASE = API_BASE + "/advisor/api-usage";
+	public static final String BSS_API_USAGE_BASE = "/wealth-service/api/v1/advisor/api-usage";
+	public static final String API_USAGE_LIST = "/list";
+	public static final int API_USAGE_DAYS_MAX = 30;
+	public static final String BSS_INTERNAL_USAGE_BASE = "/wealth-service/api/v1/internal/usage";
+	public static final String INTERNAL_USAGE_RECORD = "/record";
+	// The BFF reports its API usage to the BSS every 15 seconds: at most 500 names per report (the BSS refuses more), 2,000 names held while the BSS is away.
+	public static final long USAGE_REPORT_MILLIS = 15_000;
+	public static final int USAGE_REPORT_NAMES_MAX = 500;
+	public static final int USAGE_HELD_NAMES_MAX = 2_000;
+	public static final int USAGE_NAME_MAX = 200;
+	public static final String USAGE_UNMATCHED = "UNMATCHED";
+	public static final String USAGE_USER_ME = "me";
+	public static final int USAGE_USER_ID_LENGTH = 36;
 	public static final String INTERNAL_SETTINGS_BASE = API_BASE + "/internal/settings";
 	public static final String BSS_INTERNAL_SETTINGS_BASE = "/wealth-service/api/v1/internal/settings";
 	public static final String INTERNAL_PICK = "/pick";
@@ -83,12 +100,18 @@ public final class WealthConstants {
 	public static final String ACCOUNTS_BASE = API_BASE + "/accounts";
 	public static final String BSS_ACCOUNTS_BASE = "/wealth-service/api/v1/accounts";
 	public static final String ACCOUNTS_LIST = "/list";
+	public static final String ACCOUNTS_REFRESH = "/refresh";
 	public static final String ACCOUNTS_DETAIL = "/detail";
 	public static final String ACCOUNTS_SUBTYPES = "/subtypes";
 	public static final String ACCOUNTS_SPLITS_LIST = "/splits/list";
 	public static final String INVESTMENTS_BASE = API_BASE + "/investments";
 	public static final String BSS_INVESTMENTS_BASE = "/wealth-service/api/v1/investments";
 	public static final String INVESTMENTS_LIST = "/list";
+	public static final String INVESTMENTS_REFRESH = "/refresh";
+	public static final String PEOPLE_BASE = API_BASE + "/people";
+	public static final String BSS_PEOPLE_BASE = "/wealth-service/api/v1/people";
+	public static final String PEOPLE_LIST = "/list";
+	public static final String PEOPLE_REFRESH = "/refresh";
 
 	// Edge limits for the admin requests.
 	public static final int MENU_KEY_MAX_LENGTH = 30;

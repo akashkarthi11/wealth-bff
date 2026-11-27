@@ -29,4 +29,14 @@ class InvestmentsControllerTest {
 
 		assertEquals(body, new InvestmentsController(feign).list("Bearer t").getBody());
 	}
+
+	@Test
+	void theRefreshButtonIsForwardedWithTheTokenAndTheCallerIp() {
+		WealthFeignClient feign = mock(WealthFeignClient.class);
+		RequestHeaderUtil.setIp("203.0.113.5");
+		ApiResponse<InvestmentsDto, Void> body = new ApiResponse<>();
+		when(feign.investmentsRefresh("Bearer t", "203.0.113.5")).thenReturn(ResponseEntity.ok(body));
+
+		assertEquals(body, new InvestmentsController(feign).refresh("Bearer t").getBody());
+	}
 }

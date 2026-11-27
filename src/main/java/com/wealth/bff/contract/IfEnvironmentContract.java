@@ -28,6 +28,19 @@ public interface IfEnvironmentContract {
 	ResponseEntity<ApiResponse<ConnectionDto, Void>> redisReset(@RequestHeader(WealthConstants.HEADER_AUTHORIZATION) String authorization)
 			throws KarthiException;
 
+	// The Active / Inactive switch for Redis and Kafka (request.enabled). Decided in the BSS.
+	@PostMapping(WealthConstants.ENV_REDIS_ACTIVE)
+	ResponseEntity<ApiResponse<ConnectionDto, Void>> redisActive(@RequestHeader(WealthConstants.HEADER_AUTHORIZATION) String authorization,
+			@RequestBody ConnectionRequestDto request) throws KarthiException;
+
+	@PostMapping(WealthConstants.ENV_KAFKA_ACTIVE)
+	ResponseEntity<ApiResponse<ConnectionDto, Void>> kafkaActive(@RequestHeader(WealthConstants.HEADER_AUTHORIZATION) String authorization,
+			@RequestBody ConnectionRequestDto request) throws KarthiException;
+
+	@PostMapping(WealthConstants.ENV_KAFKA_REFRESH)
+	ResponseEntity<ApiResponse<ConnectionDto, Void>> kafkaRefreshTime(@RequestHeader(WealthConstants.HEADER_AUTHORIZATION) String authorization,
+			@RequestBody ConnectionRequestDto request) throws KarthiException;
+
 	@PostMapping(WealthConstants.ENV_KAFKA_GET)
 	ResponseEntity<ApiResponse<ConnectionDto, Void>> kafkaGet(@RequestHeader(WealthConstants.HEADER_AUTHORIZATION) String authorization)
 			throws KarthiException;

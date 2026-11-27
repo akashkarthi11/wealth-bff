@@ -22,6 +22,10 @@ import com.wealth.common.model.dto.account.AccountsOverviewDto;
 @RequestMapping(WealthConstants.ACCOUNTS_BASE)
 public interface IfAccountsContract {
 
+	@PostMapping(WealthConstants.ACCOUNTS_REFRESH)
+	ResponseEntity<ApiResponse<AccountsOverviewDto, Void>> refresh(
+			@RequestHeader(WealthConstants.HEADER_AUTHORIZATION) String authorization) throws KarthiException;
+
 	@PostMapping(WealthConstants.ACCOUNTS_LIST)
 	ResponseEntity<ApiResponse<AccountsOverviewDto, Void>> list(
 			@RequestHeader(WealthConstants.HEADER_AUTHORIZATION) String authorization) throws KarthiException;

@@ -27,7 +27,21 @@ public final class EnvironmentValidator {
 		}
 	}
 
+	// The Active / Inactive switch (Redis and Kafka): the request must say true or false. The BSS decides who may switch.
+	public static void validateActive(ConnectionRequestDto request) {
+		if (request == null || request.getEnabled() == null) {
+			throw new KarthiException(BaseError.PROVIDER_INVALID);
+		}
+	}
+
 	// A service address (http://host:port): the key is one of the two known ones and the text has only URL characters. The BSS checks the rest.
+	// Edge check only: a number must be there. The BSS decides the allowed range.
+	public static void validateRefreshTime(ConnectionRequestDto request) {
+		if (request == null || request.getRefreshSeconds() == null) {
+			throw new KarthiException(BaseError.REFRESH_TIME_INVALID);
+		}
+	}
+
 	public static void validateServiceAddress(ConnectionRequestDto request) {
 		String key = request == null ? null : request.getKey();
 		String url = request == null ? null : request.getUrl();

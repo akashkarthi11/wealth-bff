@@ -35,6 +35,14 @@ class AccountsControllerTest {
 	private WealthFeignClient feign;
 	private AccountsController controller;
 
+	@org.junit.jupiter.api.Test
+	void theRefreshButtonIsForwardedWithTheTokenAndTheCallerIp() {
+		ApiResponse<AccountsOverviewDto, Void> body = new ApiResponse<>();
+		when(feign.accountsRefresh("Bearer t", "203.0.113.5")).thenReturn(ResponseEntity.ok(body));
+
+		assertEquals(body, controller.refresh("Bearer t").getBody());
+	}
+
 	@BeforeEach
 	void setUp() {
 		feign = mock(WealthFeignClient.class);

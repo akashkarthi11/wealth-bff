@@ -23,6 +23,12 @@ public class InvestmentsController extends WealthBaseController implements IfInv
 	}
 
 	@Override
+	public ResponseEntity<ApiResponse<InvestmentsDto, Void>> refresh(String authorization) throws KarthiException {
+		LOGGER.info("Entering refresh BFF");
+		return handleResponse(feignClient.investmentsRefresh(authorization, RequestHeaderUtil.getIp()));
+	}
+
+	@Override
 	public ResponseEntity<ApiResponse<InvestmentsDto, Void>> list(String authorization) throws KarthiException {
 		LOGGER.info("Entering list BFF");
 		return handleResponse(feignClient.investmentsList(authorization, RequestHeaderUtil.getIp()));

@@ -44,6 +44,27 @@ public class EnvironmentController extends WealthBaseController implements IfEnv
 	}
 
 	@Override
+	public ResponseEntity<ApiResponse<ConnectionDto, Void>> redisActive(String authorization, ConnectionRequestDto request) throws KarthiException {
+		LOGGER.info("Entering redisActive BFF");
+		EnvironmentValidator.validateActive(request);
+		return handleResponse(feignClient.environmentRedisActive(authorization, RequestHeaderUtil.getIp(), request));
+	}
+
+	@Override
+	public ResponseEntity<ApiResponse<ConnectionDto, Void>> kafkaActive(String authorization, ConnectionRequestDto request) throws KarthiException {
+		LOGGER.info("Entering kafkaActive BFF");
+		EnvironmentValidator.validateActive(request);
+		return handleResponse(feignClient.environmentKafkaActive(authorization, RequestHeaderUtil.getIp(), request));
+	}
+
+	@Override
+	public ResponseEntity<ApiResponse<ConnectionDto, Void>> kafkaRefreshTime(String authorization, ConnectionRequestDto request) throws KarthiException {
+		LOGGER.info("Entering kafkaRefreshTime BFF");
+		EnvironmentValidator.validateRefreshTime(request);
+		return handleResponse(feignClient.environmentKafkaRefreshTime(authorization, RequestHeaderUtil.getIp(), request));
+	}
+
+	@Override
 	public ResponseEntity<ApiResponse<ConnectionDto, Void>> kafkaGet(String authorization) throws KarthiException {
 		LOGGER.info("Entering kafkaGet BFF");
 		return handleResponse(feignClient.environmentKafkaGet(authorization, RequestHeaderUtil.getIp()));

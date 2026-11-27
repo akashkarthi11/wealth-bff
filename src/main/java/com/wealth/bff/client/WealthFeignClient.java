@@ -16,12 +16,16 @@ import com.wealth.common.model.dto.AccountIdRequestDto;
 import com.wealth.common.model.dto.IdRequestDto;
 import com.wealth.common.model.dto.account.AccountDetailDto;
 import com.wealth.common.model.dto.invest.InvestmentsDto;
+import com.wealth.common.model.dto.people.PeopleOverviewDto;
 import com.wealth.common.model.dto.account.AccountSplitDto;
 import com.wealth.common.model.dto.account.AccountSubtypeDto;
 import com.wealth.common.model.dto.account.AccountsOverviewDto;
+import com.wealth.common.model.dto.admin.ApiUsageDto;
+import com.wealth.common.model.dto.admin.ApiUsageRequestDto;
 import com.wealth.common.model.dto.admin.ConnectionDto;
 import com.wealth.common.model.dto.admin.ProviderRequestDto;
 import com.wealth.common.model.dto.admin.ThirdPartyDto;
+import com.wealth.common.model.dto.admin.UsageBatchDto;
 import com.wealth.common.model.dto.admin.ThirdPartySaveRequestDto;
 import com.wealth.common.model.dto.admin.RoleCreateRequestDto;
 import com.wealth.common.model.dto.admin.RoleDto;
@@ -104,6 +108,21 @@ public interface WealthFeignClient {
 			@RequestHeader(WealthConstants.HEADER_AUTHORIZATION) String authorization,
 			@RequestHeader(value = WealthConstants.HEADER_FORWARDED_FOR, required = false) String ip);
 
+	@PostMapping(WealthConstants.BSS_ENVIRONMENT_BASE + WealthConstants.ENV_REDIS_ACTIVE)
+	ResponseEntity<ApiResponse<ConnectionDto, Void>> environmentRedisActive(
+			@RequestHeader(WealthConstants.HEADER_AUTHORIZATION) String authorization,
+			@RequestHeader(value = WealthConstants.HEADER_FORWARDED_FOR, required = false) String ip, @RequestBody ConnectionRequestDto request);
+
+	@PostMapping(WealthConstants.BSS_ENVIRONMENT_BASE + WealthConstants.ENV_KAFKA_ACTIVE)
+	ResponseEntity<ApiResponse<ConnectionDto, Void>> environmentKafkaActive(
+			@RequestHeader(WealthConstants.HEADER_AUTHORIZATION) String authorization,
+			@RequestHeader(value = WealthConstants.HEADER_FORWARDED_FOR, required = false) String ip, @RequestBody ConnectionRequestDto request);
+
+	@PostMapping(WealthConstants.BSS_ENVIRONMENT_BASE + WealthConstants.ENV_KAFKA_REFRESH)
+	ResponseEntity<ApiResponse<ConnectionDto, Void>> environmentKafkaRefreshTime(
+			@RequestHeader(WealthConstants.HEADER_AUTHORIZATION) String authorization,
+			@RequestHeader(value = WealthConstants.HEADER_FORWARDED_FOR, required = false) String ip, @RequestBody ConnectionRequestDto request);
+
 	@PostMapping(WealthConstants.BSS_ENVIRONMENT_BASE + WealthConstants.ENV_KAFKA_GET)
 	ResponseEntity<ApiResponse<ConnectionDto, Void>> environmentKafkaGet(
 			@RequestHeader(WealthConstants.HEADER_AUTHORIZATION) String authorization,
@@ -143,6 +162,11 @@ public interface WealthFeignClient {
 	@PostMapping(WealthConstants.BSS_INTERNAL_SETTINGS_BASE + WealthConstants.INTERNAL_PICK)
 	ResponseEntity<ApiResponse<ConnectionDto, Void>> internalSettingsPick(
 			@RequestHeader(value = WealthConstants.HEADER_SERVICE_KEY, required = false) String serviceKey, @RequestBody ConnectionRequestDto request);
+
+	// Service to service: the BFF reports its API usage counts to the BSS (shared service key, no user token).
+	@PostMapping(WealthConstants.BSS_INTERNAL_USAGE_BASE + WealthConstants.INTERNAL_USAGE_RECORD)
+	ResponseEntity<ApiResponse<Integer, Void>> internalUsageRecord(
+			@RequestHeader(value = WealthConstants.HEADER_SERVICE_KEY, required = false) String serviceKey, @RequestBody UsageBatchDto batch);
 
 	@PostMapping(WealthConstants.BSS_ADMIN_BASE + WealthConstants.ROLES_CREATE)
 	ResponseEntity<ApiResponse<RoleDto, Void>> adminCreateRole(
@@ -184,6 +208,11 @@ public interface WealthFeignClient {
 			@RequestHeader(WealthConstants.HEADER_AUTHORIZATION) String authorization,
 			@RequestHeader(value = WealthConstants.HEADER_FORWARDED_FOR, required = false) String ip, @RequestBody ProviderRequestDto request);
 
+	@PostMapping(WealthConstants.BSS_API_USAGE_BASE + WealthConstants.API_USAGE_LIST)
+	ResponseEntity<ApiResponse<ApiUsageDto, Void>> apiUsageList(
+			@RequestHeader(WealthConstants.HEADER_AUTHORIZATION) String authorization,
+			@RequestHeader(value = WealthConstants.HEADER_FORWARDED_FOR, required = false) String ip, @RequestBody(required = false) ApiUsageRequestDto request);
+
 	@PostMapping(WealthConstants.BSS_MENUS_BASE + WealthConstants.MENUS_LIST)
 	ResponseEntity<ApiResponse<List<NavMenuDto>, Void>> menusList(
 			@RequestHeader(WealthConstants.HEADER_AUTHORIZATION) String authorization,
@@ -194,8 +223,28 @@ public interface WealthFeignClient {
 			@RequestHeader(WealthConstants.HEADER_AUTHORIZATION) String authorization,
 			@RequestHeader(value = WealthConstants.HEADER_FORWARDED_FOR, required = false) String ip);
 
+	@PostMapping(WealthConstants.BSS_INVESTMENTS_BASE + WealthConstants.INVESTMENTS_REFRESH)
+	ResponseEntity<ApiResponse<InvestmentsDto, Void>> investmentsRefresh(
+			@RequestHeader(WealthConstants.HEADER_AUTHORIZATION) String authorization,
+			@RequestHeader(value = WealthConstants.HEADER_FORWARDED_FOR, required = false) String ip);
+
+	@PostMapping(WealthConstants.BSS_ACCOUNTS_BASE + WealthConstants.ACCOUNTS_REFRESH)
+	ResponseEntity<ApiResponse<AccountsOverviewDto, Void>> accountsRefresh(
+			@RequestHeader(WealthConstants.HEADER_AUTHORIZATION) String authorization,
+			@RequestHeader(value = WealthConstants.HEADER_FORWARDED_FOR, required = false) String ip);
+
 	@PostMapping(WealthConstants.BSS_INVESTMENTS_BASE + WealthConstants.INVESTMENTS_LIST)
 	ResponseEntity<ApiResponse<InvestmentsDto, Void>> investmentsList(
+			@RequestHeader(WealthConstants.HEADER_AUTHORIZATION) String authorization,
+			@RequestHeader(value = WealthConstants.HEADER_FORWARDED_FOR, required = false) String ip);
+
+	@PostMapping(WealthConstants.BSS_PEOPLE_BASE + WealthConstants.PEOPLE_LIST)
+	ResponseEntity<ApiResponse<PeopleOverviewDto, Void>> peopleList(
+			@RequestHeader(WealthConstants.HEADER_AUTHORIZATION) String authorization,
+			@RequestHeader(value = WealthConstants.HEADER_FORWARDED_FOR, required = false) String ip);
+
+	@PostMapping(WealthConstants.BSS_PEOPLE_BASE + WealthConstants.PEOPLE_REFRESH)
+	ResponseEntity<ApiResponse<PeopleOverviewDto, Void>> peopleRefresh(
 			@RequestHeader(WealthConstants.HEADER_AUTHORIZATION) String authorization,
 			@RequestHeader(value = WealthConstants.HEADER_FORWARDED_FOR, required = false) String ip);
 

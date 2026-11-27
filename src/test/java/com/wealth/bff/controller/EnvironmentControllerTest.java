@@ -74,6 +74,34 @@ class EnvironmentControllerTest {
 	}
 
 	@Test
+	void theActiveSwitchNeedsTrueOrFalseThenIsForwarded() {
+		ConnectionRequestDto off = new ConnectionRequestDto();
+		off.setEnabled(false);
+		ApiResponse<ConnectionDto, Void> body = new ApiResponse<>();
+		when(feign.environmentRedisActive("Bearer t", "203.0.113.5", off)).thenReturn(ResponseEntity.ok(body));
+		when(feign.environmentKafkaActive("Bearer t", "203.0.113.5", off)).thenReturn(ResponseEntity.ok(body));
+
+		assertEquals(body, controller.redisActive("Bearer t", off).getBody());
+		assertEquals(body, controller.kafkaActive("Bearer t", off).getBody());
+
+		assertEquals(BaseError.PROVIDER_INVALID, assertThrows(KarthiException.class, () -> controller.redisActive("Bearer t", new ConnectionRequestDto())).getMessage());
+		assertThrows(KarthiException.class, () -> controller.kafkaActive("Bearer t", null));
+		verify(feign, never()).environmentRedisActive(any(), any(), org.mockito.ArgumentMatchers.argThat(r -> r != null && r.getEnabled() == null));
+	}
+
+	@Test
+	void theRefreshTimeNeedsANumberAtTheEdgeAndIsThenForwarded() {
+		ConnectionRequestDto ok = new ConnectionRequestDto();
+		ok.setRefreshSeconds(15);
+		ApiResponse<ConnectionDto, Void> body = new ApiResponse<>();
+		when(feign.environmentKafkaRefreshTime("Bearer t", "203.0.113.5", ok)).thenReturn(ResponseEntity.ok(body));
+
+		assertEquals(body, controller.kafkaRefreshTime("Bearer t", ok).getBody());
+		assertEquals(BaseError.REFRESH_TIME_INVALID, assertThrows(KarthiException.class, () -> controller.kafkaRefreshTime("Bearer t", new ConnectionRequestDto())).getMessage());
+		assertThrows(KarthiException.class, () -> controller.kafkaRefreshTime("Bearer t", null));
+	}
+
+	@Test
 	void anUpdateIsCheckedAtTheEdgeThenForwarded() {
 		ConnectionRequestDto ok = request("redis.example.com:6379");
 		ApiResponse<ConnectionDto, Void> body = new ApiResponse<>();

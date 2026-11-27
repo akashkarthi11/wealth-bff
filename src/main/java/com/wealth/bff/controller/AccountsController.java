@@ -37,6 +37,12 @@ public class AccountsController extends WealthBaseController implements IfAccoun
 	}
 
 	@Override
+	public ResponseEntity<ApiResponse<AccountsOverviewDto, Void>> refresh(String authorization) throws KarthiException {
+		LOGGER.info("Entering refresh BFF");
+		return handleResponse(feignClient.accountsRefresh(authorization, RequestHeaderUtil.getIp()));
+	}
+
+	@Override
 	public ResponseEntity<ApiResponse<AccountDetailDto, Void>> detail(String authorization, IdRequestDto request) throws KarthiException {
 		LOGGER.info("Entering detail BFF");
 		AccountsValidator.validateId(request);
