@@ -13,7 +13,12 @@ import com.wealth.common.generic.KarthiException;
 import com.wealth.common.logger.KarthiLogger;
 import com.wealth.common.model.dto.AccountIdRequestDto;
 import com.wealth.common.model.dto.IdRequestDto;
+import com.wealth.common.model.dto.account.AccountCreateRequestDto;
+import com.wealth.common.model.dto.account.BalanceRecordRequestDto;
+import com.wealth.common.model.dto.account.BalanceRecordResultDto;
+import com.wealth.common.model.dto.account.FdTermsRequestDto;
 import com.wealth.common.model.dto.account.AccountDetailDto;
+import com.wealth.common.model.dto.account.AccountDto;
 import com.wealth.common.model.dto.account.AccountSplitDto;
 import com.wealth.common.model.dto.account.AccountSubtypeDto;
 import com.wealth.common.model.dto.account.AccountsOverviewDto;
@@ -40,6 +45,27 @@ public class AccountsController extends WealthBaseController implements IfAccoun
 	public ResponseEntity<ApiResponse<AccountsOverviewDto, Void>> refresh(String authorization) throws KarthiException {
 		LOGGER.info("Entering refresh BFF");
 		return handleResponse(feignClient.accountsRefresh(authorization, RequestHeaderUtil.getIp()));
+	}
+
+	@Override
+	public ResponseEntity<ApiResponse<AccountDto, Void>> create(String authorization, AccountCreateRequestDto request) throws KarthiException {
+		LOGGER.info("Entering create BFF");
+		AccountsValidator.validateCreate(request);
+		return handleResponse(feignClient.accountsCreate(authorization, RequestHeaderUtil.getIp(), request));
+	}
+
+	@Override
+	public ResponseEntity<ApiResponse<BalanceRecordResultDto, Void>> recordBalance(String authorization, BalanceRecordRequestDto request) throws KarthiException {
+		LOGGER.info("Entering recordBalance BFF");
+		AccountsValidator.validateBalance(request);
+		return handleResponse(feignClient.accountsRecordBalance(authorization, RequestHeaderUtil.getIp(), request));
+	}
+
+	@Override
+	public ResponseEntity<ApiResponse<AccountDto, Void>> updateFdTerms(String authorization, FdTermsRequestDto request) throws KarthiException {
+		LOGGER.info("Entering updateFdTerms BFF");
+		AccountsValidator.validateFdTerms(request);
+		return handleResponse(feignClient.accountsUpdateFdTerms(authorization, RequestHeaderUtil.getIp(), request));
 	}
 
 	@Override

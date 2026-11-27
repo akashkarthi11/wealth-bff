@@ -58,6 +58,13 @@ class ThirdPartyControllerTest {
 	}
 
 	@Test
+	void theOverviewIsForwardedWithTheTokenAndTheCallerIp() {
+		ApiResponse<com.wealth.common.model.dto.admin.ConnectionsOverviewDto, Void> body = new ApiResponse<>();
+		when(feign.thirdPartyOverview("Bearer t", "203.0.113.5")).thenReturn(ResponseEntity.ok(body));
+		assertEquals(body, controller.overview("Bearer t").getBody());
+	}
+
+	@Test
 	void theListIsForwardedWithTheTokenAndTheCallerIp() {
 		ApiResponse<List<ThirdPartyDto>, Void> body = new ApiResponse<>();
 		when(feign.thirdPartyList("Bearer t", "203.0.113.5")).thenReturn(ResponseEntity.ok(body));

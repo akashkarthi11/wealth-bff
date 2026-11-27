@@ -14,15 +14,46 @@ import com.wealth.bff.constants.WealthConstants;
 import com.wealth.common.generic.ApiResponse;
 import com.wealth.common.model.dto.AccountIdRequestDto;
 import com.wealth.common.model.dto.IdRequestDto;
+import com.wealth.common.model.dto.account.AccountCreateRequestDto;
+import com.wealth.common.model.dto.account.BalanceRecordRequestDto;
+import com.wealth.common.model.dto.account.BalanceRecordResultDto;
+import com.wealth.common.model.dto.account.FdTermsRequestDto;
 import com.wealth.common.model.dto.account.AccountDetailDto;
+import com.wealth.common.model.dto.account.AccountDto;
+import com.wealth.common.model.dto.invest.HoldingDto;
+import com.wealth.common.model.dto.invest.HoldingSaveRequestDto;
 import com.wealth.common.model.dto.invest.InvestmentsDto;
 import com.wealth.common.model.dto.people.PeopleOverviewDto;
+import com.wealth.common.model.dto.transaction.TransactionCreateRequestDto;
+import com.wealth.common.model.dto.transaction.TransactionDto;
+import com.wealth.common.model.dto.transaction.TransactionPageDto;
+import com.wealth.common.model.dto.transaction.TransactionPageRequestDto;
+import com.wealth.common.model.dto.transaction.WorkflowDecisionRequestDto;
+import com.wealth.common.model.dto.transaction.WorkflowItemDto;
 import com.wealth.common.model.dto.account.AccountSplitDto;
 import com.wealth.common.model.dto.account.AccountSubtypeDto;
 import com.wealth.common.model.dto.account.AccountsOverviewDto;
 import com.wealth.common.model.dto.admin.ApiUsageDto;
 import com.wealth.common.model.dto.admin.ApiUsageRequestDto;
 import com.wealth.common.model.dto.admin.ConnectionDto;
+import com.wealth.common.model.dto.admin.GmailAppSaveRequestDto;
+import com.wealth.common.model.dto.admin.GmailConnectRequestDto;
+import com.wealth.common.model.dto.admin.GmailConnectUrlDto;
+import com.wealth.common.model.dto.admin.GmailFetchResultDto;
+import com.wealth.common.model.dto.admin.GmailFinishRequestDto;
+import com.wealth.common.model.dto.admin.GmailPendingItemDto;
+import com.wealth.common.model.dto.admin.GmailReviewRequestDto;
+import com.wealth.common.model.dto.admin.BrokerUserSaveRequestDto;
+import com.wealth.common.model.dto.admin.BrokerUserStatusDto;
+import com.wealth.common.model.dto.admin.GmailStatementResultDto;
+import com.wealth.common.model.dto.admin.StatementHistoryDto;
+import com.wealth.common.model.dto.admin.StatementDownloadRequestDto;
+import com.wealth.common.model.dto.admin.StatementFileDto;
+import com.wealth.common.model.dto.admin.StatementRetryRequestDto;
+import com.wealth.common.model.dto.admin.StatementUploadRequestDto;
+import com.wealth.common.model.dto.admin.GmailStatementRowDto;
+import com.wealth.common.model.dto.admin.GmailStatementSettingsRequestDto;
+import com.wealth.common.model.dto.admin.GmailStatusDto;
 import com.wealth.common.model.dto.admin.ProviderRequestDto;
 import com.wealth.common.model.dto.admin.ThirdPartyDto;
 import com.wealth.common.model.dto.admin.UsageBatchDto;
@@ -203,10 +234,141 @@ public interface WealthFeignClient {
 			@RequestHeader(WealthConstants.HEADER_AUTHORIZATION) String authorization,
 			@RequestHeader(value = WealthConstants.HEADER_FORWARDED_FOR, required = false) String ip, @RequestBody ProviderRequestDto request);
 
+	@PostMapping(WealthConstants.BSS_THIRD_PARTY_BASE + WealthConstants.THIRD_PARTY_OVERVIEW)
+	ResponseEntity<ApiResponse<com.wealth.common.model.dto.admin.ConnectionsOverviewDto, Void>> thirdPartyOverview(
+			@RequestHeader(WealthConstants.HEADER_AUTHORIZATION) String authorization,
+			@RequestHeader(value = WealthConstants.HEADER_FORWARDED_FOR, required = false) String ip);
+
 	@PostMapping(WealthConstants.BSS_THIRD_PARTY_BASE + WealthConstants.THIRD_PARTY_REMOVE)
 	ResponseEntity<ApiResponse<Boolean, Void>> thirdPartyRemove(
 			@RequestHeader(WealthConstants.HEADER_AUTHORIZATION) String authorization,
 			@RequestHeader(value = WealthConstants.HEADER_FORWARDED_FOR, required = false) String ip, @RequestBody ProviderRequestDto request);
+
+	@PostMapping(WealthConstants.BSS_GMAIL_BASE + WealthConstants.GMAIL_STATUS)
+	ResponseEntity<ApiResponse<GmailStatusDto, Void>> gmailStatus(
+			@RequestHeader(WealthConstants.HEADER_AUTHORIZATION) String authorization,
+			@RequestHeader(value = WealthConstants.HEADER_FORWARDED_FOR, required = false) String ip);
+
+	@PostMapping(WealthConstants.BSS_GMAIL_BASE + WealthConstants.GMAIL_CONNECT_URL)
+	ResponseEntity<ApiResponse<GmailConnectUrlDto, Void>> gmailConnectUrl(
+			@RequestHeader(WealthConstants.HEADER_AUTHORIZATION) String authorization,
+			@RequestHeader(value = WealthConstants.HEADER_FORWARDED_FOR, required = false) String ip, @RequestBody GmailConnectRequestDto request);
+
+	@PostMapping(WealthConstants.BSS_GMAIL_BASE + WealthConstants.GMAIL_CONNECT_FINISH)
+	ResponseEntity<ApiResponse<GmailStatusDto, Void>> gmailConnectFinish(
+			@RequestHeader(WealthConstants.HEADER_AUTHORIZATION) String authorization,
+			@RequestHeader(value = WealthConstants.HEADER_FORWARDED_FOR, required = false) String ip, @RequestBody GmailFinishRequestDto request);
+
+	@PostMapping(WealthConstants.BSS_GMAIL_BASE + WealthConstants.GMAIL_TEST)
+	ResponseEntity<ApiResponse<GmailStatusDto, Void>> gmailTest(
+			@RequestHeader(WealthConstants.HEADER_AUTHORIZATION) String authorization,
+			@RequestHeader(value = WealthConstants.HEADER_FORWARDED_FOR, required = false) String ip);
+
+	@PostMapping(WealthConstants.BSS_GMAIL_BASE + WealthConstants.GMAIL_DISCONNECT)
+	ResponseEntity<ApiResponse<Boolean, Void>> gmailDisconnect(
+			@RequestHeader(WealthConstants.HEADER_AUTHORIZATION) String authorization,
+			@RequestHeader(value = WealthConstants.HEADER_FORWARDED_FOR, required = false) String ip);
+
+	@PostMapping(WealthConstants.BSS_GMAIL_BASE + WealthConstants.GMAIL_APP_SAVE)
+	ResponseEntity<ApiResponse<GmailStatusDto, Void>> gmailAppSave(
+			@RequestHeader(WealthConstants.HEADER_AUTHORIZATION) String authorization,
+			@RequestHeader(value = WealthConstants.HEADER_FORWARDED_FOR, required = false) String ip, @RequestBody GmailAppSaveRequestDto request);
+
+	@PostMapping(WealthConstants.BSS_GMAIL_BASE + WealthConstants.GMAIL_APP_REMOVE)
+	ResponseEntity<ApiResponse<Boolean, Void>> gmailAppRemove(
+			@RequestHeader(WealthConstants.HEADER_AUTHORIZATION) String authorization,
+			@RequestHeader(value = WealthConstants.HEADER_FORWARDED_FOR, required = false) String ip);
+
+	@PostMapping(WealthConstants.BSS_GMAIL_BASE + WealthConstants.GMAIL_FETCH)
+	ResponseEntity<ApiResponse<GmailFetchResultDto, Void>> gmailFetch(
+			@RequestHeader(WealthConstants.HEADER_AUTHORIZATION) String authorization,
+			@RequestHeader(value = WealthConstants.HEADER_FORWARDED_FOR, required = false) String ip);
+
+	@PostMapping(WealthConstants.BSS_GMAIL_BASE + WealthConstants.GMAIL_PENDING)
+	ResponseEntity<ApiResponse<List<GmailPendingItemDto>, Void>> gmailPending(
+			@RequestHeader(WealthConstants.HEADER_AUTHORIZATION) String authorization,
+			@RequestHeader(value = WealthConstants.HEADER_FORWARDED_FOR, required = false) String ip);
+
+	@PostMapping(WealthConstants.BSS_GMAIL_BASE + WealthConstants.GMAIL_REVIEW)
+	ResponseEntity<ApiResponse<Boolean, Void>> gmailReview(
+			@RequestHeader(WealthConstants.HEADER_AUTHORIZATION) String authorization,
+			@RequestHeader(value = WealthConstants.HEADER_FORWARDED_FOR, required = false) String ip, @RequestBody GmailReviewRequestDto request);
+
+	@PostMapping(WealthConstants.BSS_GMAIL_BASE + WealthConstants.GMAIL_STATEMENT_SAVE)
+	ResponseEntity<ApiResponse<GmailStatusDto, Void>> gmailStatementSave(
+			@RequestHeader(WealthConstants.HEADER_AUTHORIZATION) String authorization,
+			@RequestHeader(value = WealthConstants.HEADER_FORWARDED_FOR, required = false) String ip, @RequestBody GmailStatementSettingsRequestDto request);
+
+	@PostMapping(WealthConstants.BSS_GMAIL_BASE + WealthConstants.GMAIL_STATEMENT_REVEAL)
+	ResponseEntity<ApiResponse<com.wealth.common.model.dto.admin.GmailStatementSettingsRequestDto, Void>> gmailStatementReveal(
+			@RequestHeader(WealthConstants.HEADER_AUTHORIZATION) String authorization,
+			@RequestHeader(value = WealthConstants.HEADER_FORWARDED_FOR, required = false) String ip);
+
+	@PostMapping(WealthConstants.BSS_GMAIL_BASE + WealthConstants.GMAIL_STATEMENT_CLEAR)
+	ResponseEntity<ApiResponse<GmailStatusDto, Void>> gmailStatementClear(
+			@RequestHeader(WealthConstants.HEADER_AUTHORIZATION) String authorization,
+			@RequestHeader(value = WealthConstants.HEADER_FORWARDED_FOR, required = false) String ip);
+
+	@PostMapping(WealthConstants.BSS_GMAIL_BASE + WealthConstants.GMAIL_STATEMENTS)
+	ResponseEntity<ApiResponse<GmailStatementResultDto, Void>> gmailStatements(
+			@RequestHeader(WealthConstants.HEADER_AUTHORIZATION) String authorization,
+			@RequestHeader(value = WealthConstants.HEADER_FORWARDED_FOR, required = false) String ip);
+
+	@PostMapping(WealthConstants.BSS_GMAIL_BASE + WealthConstants.GMAIL_STATEMENT_LIST)
+	ResponseEntity<ApiResponse<List<GmailStatementRowDto>, Void>> gmailStatementList(
+			@RequestHeader(WealthConstants.HEADER_AUTHORIZATION) String authorization,
+			@RequestHeader(value = WealthConstants.HEADER_FORWARDED_FOR, required = false) String ip);
+
+	@PostMapping(WealthConstants.BSS_GMAIL_BASE + WealthConstants.GMAIL_STATEMENT_HISTORY)
+	ResponseEntity<ApiResponse<List<StatementHistoryDto>, Void>> gmailStatementHistory(
+			@RequestHeader(WealthConstants.HEADER_AUTHORIZATION) String authorization,
+			@RequestHeader(value = WealthConstants.HEADER_FORWARDED_FOR, required = false) String ip);
+
+	@PostMapping(WealthConstants.BSS_GMAIL_BASE + WealthConstants.GMAIL_STATEMENT_UPLOAD)
+	ResponseEntity<ApiResponse<GmailStatementResultDto, Void>> gmailStatementUpload(
+			@RequestHeader(WealthConstants.HEADER_AUTHORIZATION) String authorization,
+			@RequestHeader(value = WealthConstants.HEADER_FORWARDED_FOR, required = false) String ip, @RequestBody StatementUploadRequestDto request);
+
+	@PostMapping(WealthConstants.BSS_GMAIL_BASE + WealthConstants.GMAIL_STATEMENT_RETRY)
+	ResponseEntity<ApiResponse<GmailStatementResultDto, Void>> gmailStatementRetry(
+			@RequestHeader(WealthConstants.HEADER_AUTHORIZATION) String authorization,
+			@RequestHeader(value = WealthConstants.HEADER_FORWARDED_FOR, required = false) String ip, @RequestBody StatementRetryRequestDto request);
+
+	@PostMapping(WealthConstants.BSS_GMAIL_BASE + WealthConstants.GMAIL_STATEMENT_ACCEPT)
+	ResponseEntity<ApiResponse<com.wealth.common.model.dto.transaction.BankImportResultDto, Void>> gmailStatementAccept(
+			@RequestHeader(WealthConstants.HEADER_AUTHORIZATION) String authorization,
+			@RequestHeader(value = WealthConstants.HEADER_FORWARDED_FOR, required = false) String ip,
+			@RequestBody com.wealth.common.model.dto.admin.StatementAcceptRequestDto request);
+
+	@PostMapping(WealthConstants.BSS_GMAIL_BASE + WealthConstants.GMAIL_STATEMENT_DOWNLOAD)
+	ResponseEntity<ApiResponse<StatementFileDto, Void>> gmailStatementDownload(
+			@RequestHeader(WealthConstants.HEADER_AUTHORIZATION) String authorization,
+			@RequestHeader(value = WealthConstants.HEADER_FORWARDED_FOR, required = false) String ip, @RequestBody StatementDownloadRequestDto request);
+
+	@PostMapping(WealthConstants.BSS_BROKER_BASE + WealthConstants.BROKER_STATUS)
+	ResponseEntity<ApiResponse<BrokerUserStatusDto, Void>> brokerStatus(
+			@RequestHeader(WealthConstants.HEADER_AUTHORIZATION) String authorization,
+			@RequestHeader(value = WealthConstants.HEADER_FORWARDED_FOR, required = false) String ip);
+
+	@PostMapping(WealthConstants.BSS_BROKER_BASE + WealthConstants.BROKER_SAVE)
+	ResponseEntity<ApiResponse<BrokerUserStatusDto, Void>> brokerSave(
+			@RequestHeader(WealthConstants.HEADER_AUTHORIZATION) String authorization,
+			@RequestHeader(value = WealthConstants.HEADER_FORWARDED_FOR, required = false) String ip, @RequestBody BrokerUserSaveRequestDto request);
+
+	@PostMapping(WealthConstants.BSS_BROKER_BASE + WealthConstants.BROKER_TEST)
+	ResponseEntity<ApiResponse<BrokerUserStatusDto, Void>> brokerTest(
+			@RequestHeader(WealthConstants.HEADER_AUTHORIZATION) String authorization,
+			@RequestHeader(value = WealthConstants.HEADER_FORWARDED_FOR, required = false) String ip);
+
+	@PostMapping(WealthConstants.BSS_BROKER_BASE + WealthConstants.BROKER_FETCH)
+	ResponseEntity<ApiResponse<BrokerUserStatusDto, Void>> brokerFetch(
+			@RequestHeader(WealthConstants.HEADER_AUTHORIZATION) String authorization,
+			@RequestHeader(value = WealthConstants.HEADER_FORWARDED_FOR, required = false) String ip);
+
+	@PostMapping(WealthConstants.BSS_BROKER_BASE + WealthConstants.BROKER_REMOVE)
+	ResponseEntity<ApiResponse<Boolean, Void>> brokerRemove(
+			@RequestHeader(WealthConstants.HEADER_AUTHORIZATION) String authorization,
+			@RequestHeader(value = WealthConstants.HEADER_FORWARDED_FOR, required = false) String ip);
 
 	@PostMapping(WealthConstants.BSS_API_USAGE_BASE + WealthConstants.API_USAGE_LIST)
 	ResponseEntity<ApiResponse<ApiUsageDto, Void>> apiUsageList(
@@ -233,6 +395,12 @@ public interface WealthFeignClient {
 			@RequestHeader(WealthConstants.HEADER_AUTHORIZATION) String authorization,
 			@RequestHeader(value = WealthConstants.HEADER_FORWARDED_FOR, required = false) String ip);
 
+	@PostMapping(WealthConstants.BSS_INVESTMENTS_BASE + WealthConstants.INVESTMENTS_HOLDING_SAVE)
+	ResponseEntity<ApiResponse<HoldingDto, Void>> investmentsSaveHolding(
+			@RequestHeader(WealthConstants.HEADER_AUTHORIZATION) String authorization,
+			@RequestHeader(value = WealthConstants.HEADER_FORWARDED_FOR, required = false) String ip,
+			@RequestBody HoldingSaveRequestDto request);
+
 	@PostMapping(WealthConstants.BSS_INVESTMENTS_BASE + WealthConstants.INVESTMENTS_LIST)
 	ResponseEntity<ApiResponse<InvestmentsDto, Void>> investmentsList(
 			@RequestHeader(WealthConstants.HEADER_AUTHORIZATION) String authorization,
@@ -247,6 +415,64 @@ public interface WealthFeignClient {
 	ResponseEntity<ApiResponse<PeopleOverviewDto, Void>> peopleRefresh(
 			@RequestHeader(WealthConstants.HEADER_AUTHORIZATION) String authorization,
 			@RequestHeader(value = WealthConstants.HEADER_FORWARDED_FOR, required = false) String ip);
+
+	@PostMapping(WealthConstants.BSS_ACCOUNTS_BASE + WealthConstants.ACCOUNTS_CREATE)
+	ResponseEntity<ApiResponse<AccountDto, Void>> accountsCreate(
+			@RequestHeader(WealthConstants.HEADER_AUTHORIZATION) String authorization,
+			@RequestHeader(value = WealthConstants.HEADER_FORWARDED_FOR, required = false) String ip,
+			@RequestBody AccountCreateRequestDto request);
+
+	@PostMapping(WealthConstants.BSS_ACCOUNTS_BASE + WealthConstants.ACCOUNTS_BALANCE_RECORD)
+	ResponseEntity<ApiResponse<BalanceRecordResultDto, Void>> accountsRecordBalance(
+			@RequestHeader(WealthConstants.HEADER_AUTHORIZATION) String authorization,
+			@RequestHeader(value = WealthConstants.HEADER_FORWARDED_FOR, required = false) String ip,
+			@RequestBody BalanceRecordRequestDto request);
+
+	@PostMapping(WealthConstants.BSS_ACCOUNTS_BASE + WealthConstants.ACCOUNTS_FD_TERMS_UPDATE)
+	ResponseEntity<ApiResponse<AccountDto, Void>> accountsUpdateFdTerms(
+			@RequestHeader(WealthConstants.HEADER_AUTHORIZATION) String authorization,
+			@RequestHeader(value = WealthConstants.HEADER_FORWARDED_FOR, required = false) String ip,
+			@RequestBody FdTermsRequestDto request);
+
+	@PostMapping(WealthConstants.BSS_TRANSACTIONS_BASE + WealthConstants.TRANSACTIONS_LIST)
+	ResponseEntity<ApiResponse<TransactionPageDto, Void>> transactionsList(
+			@RequestHeader(WealthConstants.HEADER_AUTHORIZATION) String authorization,
+			@RequestHeader(value = WealthConstants.HEADER_FORWARDED_FOR, required = false) String ip,
+			@RequestBody TransactionPageRequestDto request);
+
+	@PostMapping(WealthConstants.BSS_TRANSACTIONS_BASE + WealthConstants.TRANSACTIONS_SUMMARY)
+	ResponseEntity<ApiResponse<com.wealth.common.model.dto.transaction.TransactionSummaryDto, Void>> transactionsSummary(
+			@RequestHeader(WealthConstants.HEADER_AUTHORIZATION) String authorization,
+			@RequestHeader(value = WealthConstants.HEADER_FORWARDED_FOR, required = false) String ip,
+			@RequestBody TransactionPageRequestDto request);
+
+	@PostMapping(WealthConstants.BSS_TRANSACTIONS_BASE + WealthConstants.TRANSACTIONS_REFRESH)
+	ResponseEntity<ApiResponse<TransactionPageDto, Void>> transactionsRefresh(
+			@RequestHeader(WealthConstants.HEADER_AUTHORIZATION) String authorization,
+			@RequestHeader(value = WealthConstants.HEADER_FORWARDED_FOR, required = false) String ip);
+
+	@PostMapping(WealthConstants.BSS_TRANSACTIONS_BASE + WealthConstants.TRANSACTIONS_CREATE)
+	ResponseEntity<ApiResponse<TransactionDto, Void>> transactionsCreate(
+			@RequestHeader(WealthConstants.HEADER_AUTHORIZATION) String authorization,
+			@RequestHeader(value = WealthConstants.HEADER_FORWARDED_FOR, required = false) String ip,
+			@RequestBody TransactionCreateRequestDto request);
+
+	@PostMapping(WealthConstants.BSS_TRANSACTIONS_BASE + WealthConstants.TRANSACTIONS_WORKFLOW_LIST)
+	ResponseEntity<ApiResponse<List<WorkflowItemDto>, Void>> transactionsWorkflowList(
+			@RequestHeader(WealthConstants.HEADER_AUTHORIZATION) String authorization,
+			@RequestHeader(value = WealthConstants.HEADER_FORWARDED_FOR, required = false) String ip);
+
+	@PostMapping(WealthConstants.BSS_TRANSACTIONS_BASE + WealthConstants.TRANSACTIONS_WORKFLOW_DECIDE)
+	ResponseEntity<ApiResponse<Boolean, Void>> transactionsWorkflowDecide(
+			@RequestHeader(WealthConstants.HEADER_AUTHORIZATION) String authorization,
+			@RequestHeader(value = WealthConstants.HEADER_FORWARDED_FOR, required = false) String ip,
+			@RequestBody WorkflowDecisionRequestDto request);
+
+	@PostMapping(WealthConstants.BSS_TRANSACTIONS_BASE + WealthConstants.TRANSACTIONS_DELETE)
+	ResponseEntity<ApiResponse<Boolean, Void>> transactionsDelete(
+			@RequestHeader(WealthConstants.HEADER_AUTHORIZATION) String authorization,
+			@RequestHeader(value = WealthConstants.HEADER_FORWARDED_FOR, required = false) String ip,
+			@RequestBody IdRequestDto request);
 
 	@PostMapping(WealthConstants.BSS_ACCOUNTS_BASE + WealthConstants.ACCOUNTS_DETAIL)
 	ResponseEntity<ApiResponse<AccountDetailDto, Void>> accountsDetail(

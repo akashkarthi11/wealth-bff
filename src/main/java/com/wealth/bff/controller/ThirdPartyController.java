@@ -55,6 +55,12 @@ public class ThirdPartyController extends WealthBaseController implements IfThir
 	}
 
 	@Override
+	public ResponseEntity<ApiResponse<com.wealth.common.model.dto.admin.ConnectionsOverviewDto, Void>> overview(String authorization) throws KarthiException {
+		LOGGER.info("Entering overview BFF");
+		return handleResponse(feignClient.thirdPartyOverview(authorization, RequestHeaderUtil.getIp()));
+	}
+
+	@Override
 	public ResponseEntity<ApiResponse<Boolean, Void>> remove(String authorization, ProviderRequestDto request) throws KarthiException {
 		LOGGER.info("Entering remove BFF");
 		ThirdPartyValidator.validateProvider(request);

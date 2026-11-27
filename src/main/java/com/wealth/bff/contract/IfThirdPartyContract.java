@@ -35,6 +35,11 @@ public interface IfThirdPartyContract {
 	ResponseEntity<ApiResponse<ThirdPartyDto, Void>> fetch(@RequestHeader(WealthConstants.HEADER_AUTHORIZATION) String authorization,
 			@RequestBody ProviderRequestDto request) throws KarthiException;
 
+	// Not admin only: the BSS decides what each caller sees.
+	@PostMapping(WealthConstants.THIRD_PARTY_OVERVIEW)
+	ResponseEntity<ApiResponse<com.wealth.common.model.dto.admin.ConnectionsOverviewDto, Void>> overview(@RequestHeader(WealthConstants.HEADER_AUTHORIZATION) String authorization)
+			throws KarthiException;
+
 	@PostMapping(WealthConstants.THIRD_PARTY_REMOVE)
 	ResponseEntity<ApiResponse<Boolean, Void>> remove(@RequestHeader(WealthConstants.HEADER_AUTHORIZATION) String authorization,
 			@RequestBody ProviderRequestDto request) throws KarthiException;

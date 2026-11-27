@@ -108,4 +108,54 @@ class AccountsControllerTest {
 		assertThrows(KarthiException.class, () -> controller.splitsList("Bearer t", accountId(null)));
 		assertThrows(KarthiException.class, () -> controller.splitsList("Bearer t", null));
 	}
+
+	private com.wealth.common.model.dto.account.AccountCreateRequestDto newAccount(String subtype, String institution, String name) {
+		com.wealth.common.model.dto.account.AccountCreateRequestDto r = new com.wealth.common.model.dto.account.AccountCreateRequestDto();
+		r.setSubtype(subtype);
+		r.setInstitution(institution);
+		r.setName(name);
+		return r;
+	}
+
+	@Test
+	void anAccountToAddIsForwardedWithTheTokenAndABadShapeNeverReachesTheBss() {
+		ApiResponse<com.wealth.common.model.dto.account.AccountDto, Void> body = new ApiResponse<>();
+		com.wealth.common.model.dto.account.AccountCreateRequestDto good = newAccount("savings", "HDFC", "Main");
+		when(feign.accountsCreate("Bearer t", "203.0.113.5", good)).thenReturn(ResponseEntity.ok(body));
+
+		assertEquals(body, controller.create("Bearer t", good).getBody());
+
+		com.wealth.common.model.dto.account.AccountCreateRequestDto currency = newAccount("savings", "HDFC", "Main");
+		currency.setCurrency("RUPEE");
+		for (com.wealth.common.model.dto.account.AccountCreateRequestDto bad : java.util.Arrays.asList(null, newAccount(null, "HDFC", "Main"), newAccount("savings", " ", "Main"),
+				newAccount("savings", "HDFC", "x".repeat(81)), currency)) {
+			assertEquals(BaseError.INVALID_REQUEST, assertThrows(KarthiException.class, () -> controller.create("Bearer t", bad)).getMessage());
+		}
+		verify(feign, never()).accountsCreate("Bearer t", "203.0.113.5", currency);
+	}
+
+	@Test
+	void aBalanceAndFdTermsAreForwardedWithTheTokenAndABadShapeNeverReachesTheBss() {
+		com.wealth.common.model.dto.account.BalanceRecordRequestDto balance = new com.wealth.common.model.dto.account.BalanceRecordRequestDto();
+		balance.setAccountId("11111111-2222-3333-4444-555555555555");
+		balance.setBalance(new java.math.BigDecimal("10"));
+		ApiResponse<com.wealth.common.model.dto.account.BalanceRecordResultDto, Void> stored = new ApiResponse<>();
+		when(feign.accountsRecordBalance("Bearer t", "203.0.113.5", balance)).thenReturn(ResponseEntity.ok(stored));
+		assertEquals(stored, controller.recordBalance("Bearer t", balance).getBody());
+
+		com.wealth.common.model.dto.account.BalanceRecordRequestDto noAmount = new com.wealth.common.model.dto.account.BalanceRecordRequestDto();
+		noAmount.setAccountId(balance.getAccountId());
+		assertEquals(BaseError.INVALID_REQUEST, assertThrows(KarthiException.class, () -> controller.recordBalance("Bearer t", noAmount)).getMessage());
+		balance.setAccountId("nope");
+		assertEquals(BaseError.INVALID_REQUEST, assertThrows(KarthiException.class, () -> controller.recordBalance("Bearer t", balance)).getMessage());
+
+		com.wealth.common.model.dto.account.FdTermsRequestDto terms = new com.wealth.common.model.dto.account.FdTermsRequestDto();
+		terms.setAccountId("11111111-2222-3333-4444-555555555555");
+		terms.setFdTerms(new com.wealth.common.model.dto.account.FdTermsDto());
+		ApiResponse<com.wealth.common.model.dto.account.AccountDto, Void> updated = new ApiResponse<>();
+		when(feign.accountsUpdateFdTerms("Bearer t", "203.0.113.5", terms)).thenReturn(ResponseEntity.ok(updated));
+		assertEquals(updated, controller.updateFdTerms("Bearer t", terms).getBody());
+		terms.setFdTerms(null);
+		assertEquals(BaseError.INVALID_REQUEST, assertThrows(KarthiException.class, () -> controller.updateFdTerms("Bearer t", terms)).getMessage());
+	}
 }
