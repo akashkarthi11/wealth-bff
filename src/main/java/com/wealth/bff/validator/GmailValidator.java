@@ -20,6 +20,7 @@ public final class GmailValidator {
 	private static final Pattern ID_SHAPE = Pattern.compile("^[A-Za-z0-9-]+$");
 	private static final Pattern PAN_SHAPE = Pattern.compile("^[A-Za-z]{5}[0-9]{4}[A-Za-z]$");
 	private static final Pattern NAME_SHAPE = Pattern.compile("^[A-Za-z]{4}$");
+	private static final Pattern EXTRA_LABEL = Pattern.compile("^[A-Za-z0-9 _-]{1,30}$");
 	private static final Pattern DOB_SHAPE = Pattern.compile("^[0-9]{8}$");
 
 	private GmailValidator() {
@@ -58,7 +59,9 @@ public final class GmailValidator {
 
 	// The statement passwords: a PAN (ABCDE1234F) and a date of birth (DDMMYYYY), each optional (blank keeps the saved one). The values are never put in the error.
 	public static void validateStatementSettings(GmailStatementSettingsRequestDto request) {
-		if (request == null || !blankOrMatches(request.getPan(), PAN_SHAPE) || !blankOrMatches(request.getDob(), DOB_SHAPE) || !blankOrMatches(request.getName4(), NAME_SHAPE)) {
+		if (request == null || !blankOrMatches(request.getPan(), PAN_SHAPE) || !blankOrMatches(request.getDob(), DOB_SHAPE) || !blankOrMatches(request.getName4(), NAME_SHAPE)
+				|| !blankOrMatches(request.getExtraLabel() == null ? null : request.getExtraLabel().trim(), EXTRA_LABEL) || !blankOrMatches(request.getRemoveExtra() == null ? null : request.getRemoveExtra().trim(), EXTRA_LABEL)
+				|| (request.getExtraValue() != null && (request.getExtraValue().length() > WealthConstants.GMAIL_PASSWORD_EDGE_MAX || request.getExtraValue().chars().anyMatch(c -> c < ' ' || c == 127)))) {
 			throw new KarthiException(BaseError.GMAIL_REQUEST_INVALID);
 		}
 	}
@@ -87,7 +90,8 @@ public final class GmailValidator {
 
 	// The statement whose rows are accepted: its id only.
 	public static void validateStatementAccept(com.wealth.common.model.dto.admin.StatementAcceptRequestDto request) {
-		if (request == null || blankOrLong(request.getId(), WealthConstants.GMAIL_ID_EDGE_MAX) || !ID_SHAPE.matcher(request.getId()).matches()) {
+		if (request == null || blankOrLong(request.getId(), WealthConstants.GMAIL_ID_EDGE_MAX) || !ID_SHAPE.matcher(request.getId()).matches()
+				|| (request.getAccountId() != null && !request.getAccountId().isBlank() && (request.getAccountId().length() > WealthConstants.GMAIL_ID_EDGE_MAX || !ID_SHAPE.matcher(request.getAccountId()).matches()))) {
 			throw new KarthiException(BaseError.GMAIL_REQUEST_INVALID);
 		}
 	}

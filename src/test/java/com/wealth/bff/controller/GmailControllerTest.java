@@ -196,6 +196,30 @@ class GmailControllerTest {
 		verify(feign, never()).gmailReview(any(), any(), org.mockito.ArgumentMatchers.argThat(r -> r != null && "delete".equals(r.getDecision())));
 	}
 
+	@Test
+	void anExtraStatementPasswordIsCheckedAtTheEdgeThenForwarded() {
+		ApiResponse<GmailStatusDto, Void> body = new ApiResponse<>();
+		GmailStatementSettingsRequestDto add = passwords(null, null);
+		add.setExtraLabel("Slice savings");
+		add.setExtraValue("s3cret-Pass");
+		when(feign.gmailStatementSave("Bearer t", "203.0.113.5", add)).thenReturn(ResponseEntity.ok(body));
+		assertEquals(body, controller.statementSave("Bearer t", add).getBody());
+		GmailStatementSettingsRequestDto remove = passwords(null, null);
+		remove.setRemoveExtra("Slice savings");
+		when(feign.gmailStatementSave("Bearer t", "203.0.113.5", remove)).thenReturn(ResponseEntity.ok(body));
+		assertEquals(body, controller.statementSave("Bearer t", remove).getBody());
+
+		for (String[] bad : new String[][] { { "bad/label", "pw" }, { "x".repeat(31), "pw" }, { "ok", "x".repeat(101) }, { "ok", "a\tb" } }) {
+			GmailStatementSettingsRequestDto request = passwords(null, null);
+			request.setExtraLabel(bad[0]);
+			request.setExtraValue(bad[1]);
+			assertEquals(BaseError.GMAIL_REQUEST_INVALID, assertThrows(KarthiException.class, () -> controller.statementSave("Bearer t", request)).getMessage());
+		}
+		GmailStatementSettingsRequestDto badRemove = passwords(null, null);
+		badRemove.setRemoveExtra("no/good");
+		assertThrows(KarthiException.class, () -> controller.statementSave("Bearer t", badRemove));
+	}
+
 	private GmailStatementSettingsRequestDto passwords(String pan, String dob) {
 		GmailStatementSettingsRequestDto r = new GmailStatementSettingsRequestDto();
 		r.setPan(pan);
@@ -267,8 +291,19 @@ class GmailControllerTest {
 			KarthiException e = assertThrows(KarthiException.class, () -> controller.statementAccept("Bearer t", request));
 			assertEquals(BaseError.GMAIL_REQUEST_INVALID, e.getMessage());
 		}
+		com.wealth.common.model.dto.admin.StatementAcceptRequestDto withAccount = new com.wealth.common.model.dto.admin.StatementAcceptRequestDto();
+		withAccount.setId("11111111-1111-1111-1111-111111111111");
+		withAccount.setAccountId("33333333-3333-3333-3333-333333333333");
+		when(feign.gmailStatementAccept("Bearer t", "203.0.113.5", withAccount)).thenReturn(ResponseEntity.ok(body));
+		assertEquals(body, controller.statementAccept("Bearer t", withAccount).getBody(), "an account id is allowed");
+		for (String badAccount : new String[] { "../x", "a b", "a".repeat(65) }) {
+			com.wealth.common.model.dto.admin.StatementAcceptRequestDto odd = new com.wealth.common.model.dto.admin.StatementAcceptRequestDto();
+			odd.setId("11111111-1111-1111-1111-111111111111");
+			odd.setAccountId(badAccount);
+			assertThrows(KarthiException.class, () -> controller.statementAccept("Bearer t", odd));
+		}
 		assertThrows(KarthiException.class, () -> controller.statementAccept("Bearer t", null));
-		verify(feign, org.mockito.Mockito.times(1)).gmailStatementAccept(org.mockito.ArgumentMatchers.anyString(), org.mockito.ArgumentMatchers.any(), org.mockito.ArgumentMatchers.any());
+		verify(feign, org.mockito.Mockito.times(2)).gmailStatementAccept(org.mockito.ArgumentMatchers.anyString(), org.mockito.ArgumentMatchers.any(), org.mockito.ArgumentMatchers.any());
 	}
 
 	@Test
