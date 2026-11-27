@@ -154,6 +154,9 @@ public final class WealthConstants {
 	public static final String BROKER_FETCH = "/fetch";
 	public static final String BROKER_REMOVE = "/remove";
 	public static final int BROKER_VALUE_EDGE_MAX = 200;
+	public static final String INDSTOCKS_BASE = API_BASE + "/indstocks";
+	public static final String BSS_INDSTOCKS_BASE = "/wealth-service/api/v1/indstocks";
+	public static final int INDSTOCKS_TOKEN_EDGE_MAX = 500;
 	public static final String GMAIL_BASE = API_BASE + "/gmail";
 	public static final String BSS_GMAIL_BASE = "/wealth-service/api/v1/gmail";
 	public static final String GMAIL_STATUS = "/status";

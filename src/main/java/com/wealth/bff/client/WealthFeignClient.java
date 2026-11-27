@@ -45,6 +45,8 @@ import com.wealth.common.model.dto.admin.GmailPendingItemDto;
 import com.wealth.common.model.dto.admin.GmailReviewRequestDto;
 import com.wealth.common.model.dto.admin.BrokerUserSaveRequestDto;
 import com.wealth.common.model.dto.admin.BrokerUserStatusDto;
+import com.wealth.common.model.dto.admin.IndstocksSaveRequestDto;
+import com.wealth.common.model.dto.admin.IndstocksStatusDto;
 import com.wealth.common.model.dto.admin.GmailStatementResultDto;
 import com.wealth.common.model.dto.admin.StatementHistoryDto;
 import com.wealth.common.model.dto.admin.StatementDownloadRequestDto;
@@ -367,6 +369,26 @@ public interface WealthFeignClient {
 
 	@PostMapping(WealthConstants.BSS_BROKER_BASE + WealthConstants.BROKER_REMOVE)
 	ResponseEntity<ApiResponse<Boolean, Void>> brokerRemove(
+			@RequestHeader(WealthConstants.HEADER_AUTHORIZATION) String authorization,
+			@RequestHeader(value = WealthConstants.HEADER_FORWARDED_FOR, required = false) String ip);
+
+	@PostMapping(WealthConstants.BSS_INDSTOCKS_BASE + WealthConstants.BROKER_STATUS)
+	ResponseEntity<ApiResponse<IndstocksStatusDto, Void>> indstocksStatus(
+			@RequestHeader(WealthConstants.HEADER_AUTHORIZATION) String authorization,
+			@RequestHeader(value = WealthConstants.HEADER_FORWARDED_FOR, required = false) String ip);
+
+	@PostMapping(WealthConstants.BSS_INDSTOCKS_BASE + WealthConstants.BROKER_SAVE)
+	ResponseEntity<ApiResponse<IndstocksStatusDto, Void>> indstocksSave(
+			@RequestHeader(WealthConstants.HEADER_AUTHORIZATION) String authorization,
+			@RequestHeader(value = WealthConstants.HEADER_FORWARDED_FOR, required = false) String ip, @RequestBody IndstocksSaveRequestDto request);
+
+	@PostMapping(WealthConstants.BSS_INDSTOCKS_BASE + WealthConstants.BROKER_TEST)
+	ResponseEntity<ApiResponse<IndstocksStatusDto, Void>> indstocksTest(
+			@RequestHeader(WealthConstants.HEADER_AUTHORIZATION) String authorization,
+			@RequestHeader(value = WealthConstants.HEADER_FORWARDED_FOR, required = false) String ip);
+
+	@PostMapping(WealthConstants.BSS_INDSTOCKS_BASE + WealthConstants.BROKER_REMOVE)
+	ResponseEntity<ApiResponse<Boolean, Void>> indstocksRemove(
 			@RequestHeader(WealthConstants.HEADER_AUTHORIZATION) String authorization,
 			@RequestHeader(value = WealthConstants.HEADER_FORWARDED_FOR, required = false) String ip);
 
