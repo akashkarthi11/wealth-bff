@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -124,5 +125,28 @@ class EnvironmentControllerTest {
 		when(feign.environmentPostgresUpdate("Bearer t", "203.0.113.5", login)).thenReturn(ResponseEntity.ok(saved));
 		assertEquals(saved, controller.postgresUpdate("Bearer t", login).getBody());
 		verify(feign, never()).environmentKafkaUpdate(any(), any(), any());
+	}
+
+	@Test
+	void theSignupCodeIsForwardedOnlyWhenPresentAndNotTooLong() {
+		ApiResponse<ConnectionDto, Void> body = new ApiResponse<>();
+		ConnectionRequestDto good = new ConnectionRequestDto();
+		good.setPassword("a-long-enough-code");
+		when(feign.environmentSignupUpdate("Bearer t", "203.0.113.5", good)).thenReturn(ResponseEntity.ok(body));
+		when(feign.environmentSignupGet("Bearer t", "203.0.113.5")).thenReturn(ResponseEntity.ok(body));
+		when(feign.environmentSignupClose("Bearer t", "203.0.113.5")).thenReturn(ResponseEntity.ok(body));
+		when(feign.environmentSignupReset("Bearer t", "203.0.113.5")).thenReturn(ResponseEntity.ok(body));
+
+		assertEquals(body, controller.signupUpdate("Bearer t", good).getBody());
+		assertEquals(body, controller.signupGet("Bearer t").getBody());
+		assertEquals(body, controller.signupClose("Bearer t").getBody());
+		assertEquals(body, controller.signupReset("Bearer t").getBody());
+
+		for (String bad : new String[] { null, "", "x".repeat(201) }) {
+			ConnectionRequestDto request = new ConnectionRequestDto();
+			request.setPassword(bad);
+			assertEquals(BaseError.ENVIRONMENT_CREDENTIALS_INVALID, assertThrows(KarthiException.class, () -> controller.signupUpdate("Bearer t", request)).getMessage());
+		}
+		verify(feign, times(1)).environmentSignupUpdate(any(), any(), any());
 	}
 }

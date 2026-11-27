@@ -108,4 +108,29 @@ public class EnvironmentController extends WealthBaseController implements IfEnv
 		EnvironmentValidator.validateServiceAddress(request);
 		return handleResponse(feignClient.environmentAddressSave(authorization, RequestHeaderUtil.getIp(), request));
 	}
+
+	@Override
+	public ResponseEntity<ApiResponse<ConnectionDto, Void>> signupGet(String authorization) throws KarthiException {
+		LOGGER.info("Entering signupGet BFF");
+		return handleResponse(feignClient.environmentSignupGet(authorization, RequestHeaderUtil.getIp()));
+	}
+
+	@Override
+	public ResponseEntity<ApiResponse<ConnectionDto, Void>> signupUpdate(String authorization, ConnectionRequestDto request) throws KarthiException {
+		LOGGER.info("Entering signupUpdate BFF");
+		EnvironmentValidator.validateAccessCode(request);
+		return handleResponse(feignClient.environmentSignupUpdate(authorization, RequestHeaderUtil.getIp(), request));
+	}
+
+	@Override
+	public ResponseEntity<ApiResponse<ConnectionDto, Void>> signupClose(String authorization) throws KarthiException {
+		LOGGER.info("Entering signupClose BFF");
+		return handleResponse(feignClient.environmentSignupClose(authorization, RequestHeaderUtil.getIp()));
+	}
+
+	@Override
+	public ResponseEntity<ApiResponse<ConnectionDto, Void>> signupReset(String authorization) throws KarthiException {
+		LOGGER.info("Entering signupReset BFF");
+		return handleResponse(feignClient.environmentSignupReset(authorization, RequestHeaderUtil.getIp()));
+	}
 }

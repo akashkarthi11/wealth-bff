@@ -69,4 +69,21 @@ public interface IfEnvironmentContract {
 	@PostMapping(WealthConstants.ENV_ADDRESS_SAVE)
 	ResponseEntity<ApiResponse<ConnectionDto, Void>> addressSave(@RequestHeader(WealthConstants.HEADER_AUTHORIZATION) String authorization,
 			@RequestBody ConnectionRequestDto request) throws KarthiException;
+
+	// Admin: the sign-up access code. get shows the state only (never the code); update saves a new code; close stops sign-up; reset goes back to the deployed key.
+	@PostMapping(WealthConstants.ENV_SIGNUP_GET)
+	ResponseEntity<ApiResponse<ConnectionDto, Void>> signupGet(@RequestHeader(WealthConstants.HEADER_AUTHORIZATION) String authorization)
+			throws KarthiException;
+
+	@PostMapping(WealthConstants.ENV_SIGNUP_UPDATE)
+	ResponseEntity<ApiResponse<ConnectionDto, Void>> signupUpdate(@RequestHeader(WealthConstants.HEADER_AUTHORIZATION) String authorization,
+			@RequestBody ConnectionRequestDto request) throws KarthiException;
+
+	@PostMapping(WealthConstants.ENV_SIGNUP_CLOSE)
+	ResponseEntity<ApiResponse<ConnectionDto, Void>> signupClose(@RequestHeader(WealthConstants.HEADER_AUTHORIZATION) String authorization)
+			throws KarthiException;
+
+	@PostMapping(WealthConstants.ENV_SIGNUP_RESET)
+	ResponseEntity<ApiResponse<ConnectionDto, Void>> signupReset(@RequestHeader(WealthConstants.HEADER_AUTHORIZATION) String authorization)
+			throws KarthiException;
 }

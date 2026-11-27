@@ -205,6 +205,26 @@ public interface WealthFeignClient {
 	ResponseEntity<ApiResponse<RoleDto, Void>> adminCreateRole(
 			@RequestHeader(WealthConstants.HEADER_AUTHORIZATION) String authorization,
 			@RequestHeader(value = WealthConstants.HEADER_FORWARDED_FOR, required = false) String ip, @RequestBody RoleCreateRequestDto request);
+	@PostMapping(WealthConstants.BSS_ENVIRONMENT_BASE + WealthConstants.ENV_SIGNUP_GET)
+	ResponseEntity<ApiResponse<ConnectionDto, Void>> environmentSignupGet(
+			@RequestHeader(WealthConstants.HEADER_AUTHORIZATION) String authorization,
+			@RequestHeader(value = WealthConstants.HEADER_FORWARDED_FOR, required = false) String ip);
+
+	@PostMapping(WealthConstants.BSS_ENVIRONMENT_BASE + WealthConstants.ENV_SIGNUP_UPDATE)
+	ResponseEntity<ApiResponse<ConnectionDto, Void>> environmentSignupUpdate(
+			@RequestHeader(WealthConstants.HEADER_AUTHORIZATION) String authorization,
+			@RequestHeader(value = WealthConstants.HEADER_FORWARDED_FOR, required = false) String ip, @RequestBody ConnectionRequestDto request);
+
+	@PostMapping(WealthConstants.BSS_ENVIRONMENT_BASE + WealthConstants.ENV_SIGNUP_CLOSE)
+	ResponseEntity<ApiResponse<ConnectionDto, Void>> environmentSignupClose(
+			@RequestHeader(WealthConstants.HEADER_AUTHORIZATION) String authorization,
+			@RequestHeader(value = WealthConstants.HEADER_FORWARDED_FOR, required = false) String ip);
+
+	@PostMapping(WealthConstants.BSS_ENVIRONMENT_BASE + WealthConstants.ENV_SIGNUP_RESET)
+	ResponseEntity<ApiResponse<ConnectionDto, Void>> environmentSignupReset(
+			@RequestHeader(WealthConstants.HEADER_AUTHORIZATION) String authorization,
+			@RequestHeader(value = WealthConstants.HEADER_FORWARDED_FOR, required = false) String ip);
+
 
 	@PostMapping(WealthConstants.BSS_ADMIN_BASE + WealthConstants.USERS_LIST)
 	ResponseEntity<ApiResponse<List<UserAccessDto>, Void>> adminUsersList(

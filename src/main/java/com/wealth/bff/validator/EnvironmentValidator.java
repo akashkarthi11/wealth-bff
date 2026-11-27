@@ -51,6 +51,14 @@ public final class EnvironmentValidator {
 		}
 	}
 
+	// The sign-up access code: present and not too long. The BSS checks the minimum length and the characters.
+	public static void validateAccessCode(ConnectionRequestDto request) {
+		String code = request == null ? null : request.getPassword();
+		if (code == null || code.isEmpty() || tooLong(code, WealthConstants.CREDENTIAL_PASSWORD_MAX)) {
+			throw new KarthiException(BaseError.ENVIRONMENT_CREDENTIALS_INVALID);
+		}
+	}
+
 	private static boolean tooLong(String text, int max) {
 		return text != null && text.length() > max;
 	}

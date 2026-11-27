@@ -68,6 +68,10 @@ public final class WealthConstants {
 	public static final String MENUS_LIST = "/list";
 	public static final String API_USAGE_BASE = API_BASE + "/advisor/api-usage";
 	public static final String BSS_API_USAGE_BASE = "/wealth-service/api/v1/advisor/api-usage";
+	public static final String ENV_SIGNUP_GET = "/signup/get";
+	public static final String ENV_SIGNUP_UPDATE = "/signup/update";
+	public static final String ENV_SIGNUP_CLOSE = "/signup/close";
+	public static final String ENV_SIGNUP_RESET = "/signup/reset";
 	public static final String API_USAGE_LIST = "/list";
 	public static final int API_USAGE_DAYS_MAX = 30;
 	public static final String BSS_INTERNAL_USAGE_BASE = "/wealth-service/api/v1/internal/usage";
