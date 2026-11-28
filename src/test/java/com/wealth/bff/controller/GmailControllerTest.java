@@ -30,6 +30,8 @@ import com.wealth.common.model.dto.admin.GmailStatementResultDto;
 import com.wealth.common.model.dto.admin.GmailStatementRowDto;
 import com.wealth.common.model.dto.admin.GmailStatementSettingsRequestDto;
 import com.wealth.common.model.dto.admin.GmailStatusDto;
+import com.wealth.common.model.dto.admin.GmailSyncRequestDto;
+import com.wealth.common.model.dto.admin.GmailSyncStatusDto;
 import com.wealth.common.utils.generic.RequestHeaderUtil;
 
 class GmailControllerTest {
@@ -365,5 +367,17 @@ class GmailControllerTest {
 		}
 		assertThrows(KarthiException.class, () -> controller.statementSave("Bearer t", null));
 		verify(feign, never()).gmailStatementSave(any(), any(), any());
+	}
+
+	@Test
+	void theBackgroundReadIsStartedAndAskedAboutWithTheTokenAndTheCallerIp() {
+		GmailSyncRequestDto request = new GmailSyncRequestDto();
+		request.setKind("all");
+		ApiResponse<GmailSyncStatusDto, Void> status = new ApiResponse<>();
+		when(feign.gmailSyncStart("Bearer t", "203.0.113.5", request)).thenReturn(ResponseEntity.ok(status));
+		when(feign.gmailSyncStatus("Bearer t", "203.0.113.5")).thenReturn(ResponseEntity.ok(status));
+
+		assertEquals(status, controller.syncStart("Bearer t", request).getBody());
+		assertEquals(status, controller.syncStatus("Bearer t").getBody());
 	}
 }

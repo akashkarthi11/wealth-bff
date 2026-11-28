@@ -40,6 +40,8 @@ import com.wealth.common.model.dto.admin.GmailAppSaveRequestDto;
 import com.wealth.common.model.dto.admin.GmailConnectRequestDto;
 import com.wealth.common.model.dto.admin.GmailConnectUrlDto;
 import com.wealth.common.model.dto.admin.GmailFetchResultDto;
+import com.wealth.common.model.dto.admin.GmailSyncRequestDto;
+import com.wealth.common.model.dto.admin.GmailSyncStatusDto;
 import com.wealth.common.model.dto.admin.GmailFinishRequestDto;
 import com.wealth.common.model.dto.admin.GmailPendingItemDto;
 import com.wealth.common.model.dto.admin.GmailReviewRequestDto;
@@ -317,6 +319,16 @@ public interface WealthFeignClient {
 
 	@PostMapping(WealthConstants.BSS_GMAIL_BASE + WealthConstants.GMAIL_FETCH)
 	ResponseEntity<ApiResponse<GmailFetchResultDto, Void>> gmailFetch(
+			@RequestHeader(WealthConstants.HEADER_AUTHORIZATION) String authorization,
+			@RequestHeader(value = WealthConstants.HEADER_FORWARDED_FOR, required = false) String ip);
+
+	@PostMapping(WealthConstants.BSS_GMAIL_BASE + WealthConstants.GMAIL_SYNC_START)
+	ResponseEntity<ApiResponse<GmailSyncStatusDto, Void>> gmailSyncStart(
+			@RequestHeader(WealthConstants.HEADER_AUTHORIZATION) String authorization,
+			@RequestHeader(value = WealthConstants.HEADER_FORWARDED_FOR, required = false) String ip, @RequestBody GmailSyncRequestDto request);
+
+	@PostMapping(WealthConstants.BSS_GMAIL_BASE + WealthConstants.GMAIL_SYNC_STATUS)
+	ResponseEntity<ApiResponse<GmailSyncStatusDto, Void>> gmailSyncStatus(
 			@RequestHeader(WealthConstants.HEADER_AUTHORIZATION) String authorization,
 			@RequestHeader(value = WealthConstants.HEADER_FORWARDED_FOR, required = false) String ip);
 

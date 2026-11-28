@@ -15,6 +15,8 @@ import com.wealth.common.model.dto.admin.GmailAppSaveRequestDto;
 import com.wealth.common.model.dto.admin.GmailConnectRequestDto;
 import com.wealth.common.model.dto.admin.GmailConnectUrlDto;
 import com.wealth.common.model.dto.admin.GmailFetchResultDto;
+import com.wealth.common.model.dto.admin.GmailSyncRequestDto;
+import com.wealth.common.model.dto.admin.GmailSyncStatusDto;
 import com.wealth.common.model.dto.admin.GmailFinishRequestDto;
 import com.wealth.common.model.dto.admin.GmailPendingItemDto;
 import com.wealth.common.model.dto.admin.GmailReviewRequestDto;
@@ -89,6 +91,18 @@ public class GmailController extends WealthBaseController implements IfGmailCont
 	public ResponseEntity<ApiResponse<GmailFetchResultDto, Void>> fetch(String authorization) throws KarthiException {
 		LOGGER.info("Entering fetch BFF");
 		return handleResponse(feignClient.gmailFetch(authorization, RequestHeaderUtil.getIp()));
+	}
+
+	@Override
+	public ResponseEntity<ApiResponse<GmailSyncStatusDto, Void>> syncStart(String authorization, GmailSyncRequestDto request) throws KarthiException {
+		LOGGER.info("Entering syncStart BFF");
+		return handleResponse(feignClient.gmailSyncStart(authorization, RequestHeaderUtil.getIp(), request));
+	}
+
+	@Override
+	public ResponseEntity<ApiResponse<GmailSyncStatusDto, Void>> syncStatus(String authorization) throws KarthiException {
+		LOGGER.info("Entering syncStatus BFF");
+		return handleResponse(feignClient.gmailSyncStatus(authorization, RequestHeaderUtil.getIp()));
 	}
 
 	@Override

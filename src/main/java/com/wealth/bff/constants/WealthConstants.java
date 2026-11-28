@@ -191,6 +191,8 @@ public final class WealthConstants {
 	public static final String GMAIL_APP_SAVE = "/app-save";
 	public static final String GMAIL_APP_REMOVE = "/app-remove";
 	public static final String GMAIL_FETCH = "/fetch";
+	public static final String GMAIL_SYNC_START = "/sync-start";
+	public static final String GMAIL_SYNC_STATUS = "/sync-status";
 	public static final String GMAIL_PENDING = "/pending";
 	public static final String GMAIL_REVIEW = "/review";
 	public static final String GMAIL_STATEMENT_SAVE = "/statement-save";

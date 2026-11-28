@@ -15,6 +15,8 @@ import com.wealth.common.model.dto.admin.GmailAppSaveRequestDto;
 import com.wealth.common.model.dto.admin.GmailConnectRequestDto;
 import com.wealth.common.model.dto.admin.GmailConnectUrlDto;
 import com.wealth.common.model.dto.admin.GmailFetchResultDto;
+import com.wealth.common.model.dto.admin.GmailSyncRequestDto;
+import com.wealth.common.model.dto.admin.GmailSyncStatusDto;
 import com.wealth.common.model.dto.admin.GmailFinishRequestDto;
 import com.wealth.common.model.dto.admin.GmailPendingItemDto;
 import com.wealth.common.model.dto.admin.GmailReviewRequestDto;
@@ -58,6 +60,13 @@ public interface IfGmailContract {
 
 	@PostMapping(WealthConstants.GMAIL_FETCH)
 	ResponseEntity<ApiResponse<GmailFetchResultDto, Void>> fetch(@RequestHeader(WealthConstants.HEADER_AUTHORIZATION) String authorization) throws KarthiException;
+
+	@PostMapping(WealthConstants.GMAIL_SYNC_START)
+	ResponseEntity<ApiResponse<GmailSyncStatusDto, Void>> syncStart(@RequestHeader(WealthConstants.HEADER_AUTHORIZATION) String authorization,
+			@RequestBody GmailSyncRequestDto request) throws KarthiException;
+
+	@PostMapping(WealthConstants.GMAIL_SYNC_STATUS)
+	ResponseEntity<ApiResponse<GmailSyncStatusDto, Void>> syncStatus(@RequestHeader(WealthConstants.HEADER_AUTHORIZATION) String authorization) throws KarthiException;
 
 	@PostMapping(WealthConstants.GMAIL_PENDING)
 	ResponseEntity<ApiResponse<List<GmailPendingItemDto>, Void>> pending(@RequestHeader(WealthConstants.HEADER_AUTHORIZATION) String authorization) throws KarthiException;
