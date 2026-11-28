@@ -89,6 +89,27 @@ class TransactionsControllerTest {
 	}
 
 	@Test
+	void theSummaryKeepsTheKindOfEachCategoryAndTheTotalsByKindAsTheBssSentThem() throws Exception {
+		com.wealth.common.model.dto.transaction.TransactionSummaryItemDto category = new com.wealth.common.model.dto.transaction.TransactionSummaryItemDto();
+		category.setLabel("Crypto");
+		category.setKind("investment");
+		com.wealth.common.model.dto.transaction.TransactionSummaryItemDto kind = new com.wealth.common.model.dto.transaction.TransactionSummaryItemDto();
+		kind.setLabel("investment");
+		kind.setKind("investment");
+		com.wealth.common.model.dto.transaction.TransactionSummaryDto summary = new com.wealth.common.model.dto.transaction.TransactionSummaryDto();
+		summary.setByCategory(java.util.List.of(category));
+		summary.setByKind(java.util.List.of(kind));
+		ApiResponse<com.wealth.common.model.dto.transaction.TransactionSummaryDto, Void> body = new ApiResponse<>();
+		body.setData(summary);
+		when(feign.transactionsSummary(any(), any(), any())).thenReturn(ResponseEntity.ok(body));
+
+		com.fasterxml.jackson.databind.JsonNode json = new com.fasterxml.jackson.databind.ObjectMapper().valueToTree(controller.summary("Bearer t", null).getBody());
+
+		assertEquals("investment", json.at("/data/byKind/0/kind").asText(), "the totals by kind reach the screen");
+		assertEquals("investment", json.at("/data/byCategory/0/kind").asText(), "each category keeps its kind");
+	}
+
+	@Test
 	void aMissingListRequestMeansTheFirstPageAndBadShapesNeverReachTheBss() {
 		when(feign.transactionsList(any(), any(), any())).thenReturn(ResponseEntity.ok(new ApiResponse<>()));
 		controller.list("Bearer t", null);
