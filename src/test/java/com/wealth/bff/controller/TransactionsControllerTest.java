@@ -97,8 +97,12 @@ class TransactionsControllerTest {
 		kind.setLabel("investment");
 		kind.setKind("investment");
 		com.wealth.common.model.dto.transaction.TransactionSummaryDto summary = new com.wealth.common.model.dto.transaction.TransactionSummaryDto();
+		category.setTrend(java.util.List.of(new java.math.BigDecimal("10.00"), new java.math.BigDecimal("0.00")));
+		com.wealth.common.model.dto.transaction.TransactionSummaryItemDto day = new com.wealth.common.model.dto.transaction.TransactionSummaryItemDto();
+		day.setLabel("2026-11-03");
 		summary.setByCategory(java.util.List.of(category));
 		summary.setByKind(java.util.List.of(kind));
+		summary.setByDay(java.util.List.of(day));
 		ApiResponse<com.wealth.common.model.dto.transaction.TransactionSummaryDto, Void> body = new ApiResponse<>();
 		body.setData(summary);
 		when(feign.transactionsSummary(any(), any(), any())).thenReturn(ResponseEntity.ok(body));
@@ -107,6 +111,8 @@ class TransactionsControllerTest {
 
 		assertEquals("investment", json.at("/data/byKind/0/kind").asText(), "the totals by kind reach the screen");
 		assertEquals("investment", json.at("/data/byCategory/0/kind").asText(), "each category keeps its kind");
+		assertEquals(2, json.at("/data/byCategory/0/trend").size(), "each category keeps its monthly trend");
+		assertEquals("2026-11-03", json.at("/data/byDay/0/label").asText(), "the daily totals reach the screen");
 	}
 
 	@Test
