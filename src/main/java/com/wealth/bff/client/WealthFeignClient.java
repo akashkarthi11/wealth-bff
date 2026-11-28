@@ -558,4 +558,39 @@ public interface WealthFeignClient {
 			@RequestHeader(WealthConstants.HEADER_AUTHORIZATION) String authorization,
 			@RequestHeader(value = WealthConstants.HEADER_FORWARDED_FOR, required = false) String ip,
 			@RequestBody AccountIdRequestDto request);
+	@PostMapping(WealthConstants.BSS_FINVU_AA_BASE + WealthConstants.FINVU_AA_CONFIG)
+	ResponseEntity<ApiResponse<Map<String, Object>, Void>> finvuConfiguration(
+			@RequestHeader(WealthConstants.HEADER_AUTHORIZATION) String authorization,
+			@RequestHeader(value = WealthConstants.HEADER_FORWARDED_FOR, required = false) String ip);
+
+	@PostMapping(WealthConstants.BSS_FINVU_AA_BASE + WealthConstants.FINVU_AA_CONSENT_REQUEST)
+	ResponseEntity<ApiResponse<Map<String, Object>, Void>> finvuConsentRequest(
+			@RequestHeader(WealthConstants.HEADER_AUTHORIZATION) String authorization,
+			@RequestHeader(value = WealthConstants.HEADER_FORWARDED_FOR, required = false) String ip,
+			@RequestBody Map<String, Object> request);
+
+	@PostMapping(WealthConstants.BSS_FINVU_AA_BASE + WealthConstants.FINVU_AA_CONSENT_STATUS)
+	ResponseEntity<ApiResponse<Map<String, Object>, Void>> finvuConsentStatus(
+			@RequestHeader(WealthConstants.HEADER_AUTHORIZATION) String authorization,
+			@RequestHeader(value = WealthConstants.HEADER_FORWARDED_FOR, required = false) String ip,
+			@RequestBody Map<String, Object> request);
+
+	@PostMapping(WealthConstants.BSS_FINVU_AA_BASE + WealthConstants.FINVU_AA_FI_REQUEST)
+	ResponseEntity<ApiResponse<Map<String, Object>, Void>> finvuFiRequest(
+			@RequestHeader(WealthConstants.HEADER_AUTHORIZATION) String authorization,
+			@RequestHeader(value = WealthConstants.HEADER_FORWARDED_FOR, required = false) String ip,
+			@RequestBody Map<String, Object> request);
+
+	@PostMapping(WealthConstants.BSS_FINVU_AA_BASE + WealthConstants.FINVU_AA_FI_STATUS)
+	ResponseEntity<ApiResponse<Map<String, Object>, Void>> finvuFiStatus(
+			@RequestHeader(WealthConstants.HEADER_AUTHORIZATION) String authorization,
+			@RequestHeader(value = WealthConstants.HEADER_FORWARDED_FOR, required = false) String ip,
+			@RequestBody Map<String, Object> request);
+
+	@PostMapping(WealthConstants.BSS_FINVU_AA_BASE + WealthConstants.FINVU_AA_FI_FETCH)
+	ResponseEntity<ApiResponse<Map<String, Object>, Void>> finvuFiFetch(
+			@RequestHeader(WealthConstants.HEADER_AUTHORIZATION) String authorization,
+			@RequestHeader(value = WealthConstants.HEADER_FORWARDED_FOR, required = false) String ip,
+			@RequestBody Map<String, Object> request);
+
 }

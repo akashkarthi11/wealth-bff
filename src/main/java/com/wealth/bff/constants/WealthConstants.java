@@ -107,6 +107,15 @@ public final class WealthConstants {
 	public static final int CONNECTION_PROBE_TIMEOUT_SECONDS = 5;
 	public static final String ROLE_ADMIN = "admin";
 
+	public static final String FINVU_AA_BASE = API_BASE + "/aa/finvu";
+	public static final String BSS_FINVU_AA_BASE = "/wealth-service/api/v1/aa/finvu";
+	public static final String FINVU_AA_CONFIG = "/config";
+	public static final String FINVU_AA_CONSENT_REQUEST = "/consent/request";
+	public static final String FINVU_AA_CONSENT_STATUS = "/consent/status";
+	public static final String FINVU_AA_FI_REQUEST = "/fi/request";
+	public static final String FINVU_AA_FI_STATUS = "/fi/status";
+	public static final String FINVU_AA_FI_FETCH = "/fi/fetch";
+
 	public static final String ACCOUNTS_BASE = API_BASE + "/accounts";
 	public static final String BSS_ACCOUNTS_BASE = "/wealth-service/api/v1/accounts";
 	public static final String ACCOUNTS_LIST = "/list";
