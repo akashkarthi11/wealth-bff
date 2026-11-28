@@ -164,6 +164,13 @@ public class GmailController extends WealthBaseController implements IfGmailCont
 	}
 
 	@Override
+	public ResponseEntity<ApiResponse<List<com.wealth.common.model.dto.admin.StatementRowDto>, Void>> statementRows(String authorization, StatementDownloadRequestDto request) throws KarthiException {
+		LOGGER.info("Entering statementRows BFF");
+		GmailValidator.validateStatementDownload(request);
+		return handleResponse(feignClient.gmailStatementRows(authorization, RequestHeaderUtil.getIp(), request));
+	}
+
+	@Override
 	public ResponseEntity<ApiResponse<GmailStatementResultDto, Void>> statementRetry(String authorization, StatementRetryRequestDto request) throws KarthiException {
 		LOGGER.info("Entering statementRetry BFF");
 		GmailValidator.validateStatementRetry(request);

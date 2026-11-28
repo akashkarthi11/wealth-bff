@@ -100,6 +100,10 @@ public interface IfGmailContract {
 	ResponseEntity<ApiResponse<StatementFileDto, Void>> statementDownload(@RequestHeader(WealthConstants.HEADER_AUTHORIZATION) String authorization,
 			@RequestBody StatementDownloadRequestDto request) throws KarthiException;
 
+	@PostMapping(WealthConstants.GMAIL_STATEMENT_ROWS)
+	ResponseEntity<ApiResponse<List<com.wealth.common.model.dto.admin.StatementRowDto>, Void>> statementRows(@RequestHeader(WealthConstants.HEADER_AUTHORIZATION) String authorization,
+			@RequestBody StatementDownloadRequestDto request) throws KarthiException;
+
 	@PostMapping(WealthConstants.GMAIL_STATEMENT_RETRY)
 	ResponseEntity<ApiResponse<GmailStatementResultDto, Void>> statementRetry(@RequestHeader(WealthConstants.HEADER_AUTHORIZATION) String authorization,
 			@RequestBody StatementRetryRequestDto request) throws KarthiException;

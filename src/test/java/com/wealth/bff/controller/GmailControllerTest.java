@@ -309,6 +309,19 @@ class GmailControllerTest {
 	}
 
 	@Test
+	void theRowsOfAStatementAreCheckedAtTheEdgeThenForwarded() {
+		ApiResponse<List<com.wealth.common.model.dto.admin.StatementRowDto>, Void> rows = new ApiResponse<>();
+		when(feign.gmailStatementRows(any(), any(), any())).thenReturn(ResponseEntity.ok(rows));
+		com.wealth.common.model.dto.admin.StatementDownloadRequestDto request = new com.wealth.common.model.dto.admin.StatementDownloadRequestDto();
+		request.setId("11111111-1111-1111-1111-111111111111");
+		assertEquals(rows, controller.statementRows("Bearer t", request).getBody());
+		verify(feign).gmailStatementRows("Bearer t", "203.0.113.5", request);
+		request.setId("1; drop");
+		assertThrows(KarthiException.class, () -> controller.statementRows("Bearer t", request));
+		assertThrows(KarthiException.class, () -> controller.statementRows("Bearer t", null));
+	}
+
+	@Test
 	void theStatementDownloadIsCheckedAtTheEdgeThenForwarded() {
 		ApiResponse<com.wealth.common.model.dto.admin.StatementFileDto, Void> file = new ApiResponse<>();
 		when(feign.gmailStatementDownload(any(), any(), any())).thenReturn(ResponseEntity.ok(file));

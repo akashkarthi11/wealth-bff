@@ -393,6 +393,11 @@ public interface WealthFeignClient {
 			@RequestHeader(WealthConstants.HEADER_AUTHORIZATION) String authorization,
 			@RequestHeader(value = WealthConstants.HEADER_FORWARDED_FOR, required = false) String ip, @RequestBody StatementDownloadRequestDto request);
 
+	@PostMapping(WealthConstants.BSS_GMAIL_BASE + WealthConstants.GMAIL_STATEMENT_ROWS)
+	ResponseEntity<ApiResponse<List<com.wealth.common.model.dto.admin.StatementRowDto>, Void>> gmailStatementRows(
+			@RequestHeader(WealthConstants.HEADER_AUTHORIZATION) String authorization,
+			@RequestHeader(value = WealthConstants.HEADER_FORWARDED_FOR, required = false) String ip, @RequestBody StatementDownloadRequestDto request);
+
 	@PostMapping(WealthConstants.BSS_BROKER_BASE + WealthConstants.BROKER_STATUS)
 	ResponseEntity<ApiResponse<BrokerUserStatusDto, Void>> brokerStatus(
 			@RequestHeader(WealthConstants.HEADER_AUTHORIZATION) String authorization,
@@ -495,6 +500,105 @@ public interface WealthFeignClient {
 			@RequestHeader(WealthConstants.HEADER_AUTHORIZATION) String authorization,
 			@RequestHeader(value = WealthConstants.HEADER_FORWARDED_FOR, required = false) String ip,
 			@RequestBody com.wealth.common.model.dto.IdRequestDto request);
+
+	@PostMapping(WealthConstants.BSS_PEOPLE_BASE + WealthConstants.PEOPLE_ENTRY_CREATE)
+	ResponseEntity<ApiResponse<com.wealth.common.model.dto.people.PersonEntryResultDto, Void>> peopleEntryCreate(
+			@RequestHeader(WealthConstants.HEADER_AUTHORIZATION) String authorization,
+			@RequestHeader(value = WealthConstants.HEADER_FORWARDED_FOR, required = false) String ip,
+			@RequestBody com.wealth.common.model.dto.people.PersonEntryRequestDto request);
+
+	@PostMapping(WealthConstants.BSS_PEOPLE_BASE + WealthConstants.PEOPLE_SHARE_PAID)
+	ResponseEntity<ApiResponse<com.wealth.common.model.dto.people.SharePaidResultDto, Void>> peopleSharePaid(
+			@RequestHeader(WealthConstants.HEADER_AUTHORIZATION) String authorization,
+			@RequestHeader(value = WealthConstants.HEADER_FORWARDED_FOR, required = false) String ip,
+			@RequestBody com.wealth.common.model.dto.people.SharePaidRequestDto request);
+
+	@PostMapping(WealthConstants.BSS_PEOPLE_BASE + WealthConstants.PEOPLE_ROUNDOFF)
+	ResponseEntity<ApiResponse<com.wealth.common.model.dto.people.RoundOffResultDto, Void>> peopleRoundOff(
+			@RequestHeader(WealthConstants.HEADER_AUTHORIZATION) String authorization,
+			@RequestHeader(value = WealthConstants.HEADER_FORWARDED_FOR, required = false) String ip,
+			@RequestBody com.wealth.common.model.dto.people.RoundOffRequestDto request);
+
+	@PostMapping(WealthConstants.BSS_PEOPLE_BASE + WealthConstants.PEOPLE_RECORDS_UPDATE)
+	ResponseEntity<ApiResponse<com.wealth.common.model.dto.people.RecordStatusResultDto, Void>> peopleRecordsUpdate(
+			@RequestHeader(WealthConstants.HEADER_AUTHORIZATION) String authorization,
+			@RequestHeader(value = WealthConstants.HEADER_FORWARDED_FOR, required = false) String ip,
+			@RequestBody com.wealth.common.model.dto.people.RecordStatusRequestDto request);
+
+	@PostMapping(WealthConstants.BSS_PEOPLE_BASE + WealthConstants.PEOPLE_SAVE)
+	ResponseEntity<ApiResponse<com.wealth.common.model.dto.people.PersonSaveResultDto, Void>> peopleSave(
+			@RequestHeader(WealthConstants.HEADER_AUTHORIZATION) String authorization,
+			@RequestHeader(value = WealthConstants.HEADER_FORWARDED_FOR, required = false) String ip,
+			@RequestBody com.wealth.common.model.dto.people.PersonSaveRequestDto request);
+
+	@PostMapping(WealthConstants.BSS_PEOPLE_BASE + WealthConstants.PEOPLE_SHARE_UPDATE)
+	ResponseEntity<ApiResponse<com.wealth.common.model.dto.people.ShareUpdateResultDto, Void>> peopleShareUpdate(
+			@RequestHeader(WealthConstants.HEADER_AUTHORIZATION) String authorization,
+			@RequestHeader(value = WealthConstants.HEADER_FORWARDED_FOR, required = false) String ip,
+			@RequestBody com.wealth.common.model.dto.people.ShareUpdateRequestDto request);
+
+	// Public: no token. Only the caller's address is passed on, for the BSS rate limit.
+	@PostMapping(WealthConstants.BSS_LEND_VIEW_BASE + WealthConstants.LEND_VIEW_VIEW)
+	ResponseEntity<ApiResponse<com.wealth.common.model.dto.people.LendViewDto, Void>> lendView(
+			@RequestHeader(value = WealthConstants.HEADER_FORWARDED_FOR, required = false) String ip,
+			@RequestBody com.wealth.common.model.dto.people.LendViewRequestDto request);
+
+	@PostMapping(WealthConstants.BSS_PEOPLE_BASE + WealthConstants.PEOPLE_MERGE)
+	ResponseEntity<ApiResponse<com.wealth.common.model.dto.people.PersonMergeResultDto, Void>> peopleMerge(
+			@RequestHeader(WealthConstants.HEADER_AUTHORIZATION) String authorization,
+			@RequestHeader(value = WealthConstants.HEADER_FORWARDED_FOR, required = false) String ip,
+			@RequestBody com.wealth.common.model.dto.people.PersonMergeRequestDto request);
+
+	@PostMapping(WealthConstants.BSS_PEOPLE_BASE + WealthConstants.PEOPLE_COMMENT_CREATE)
+	ResponseEntity<ApiResponse<com.wealth.common.model.dto.people.CommentCreateResultDto, Void>> peopleCommentCreate(
+			@RequestHeader(WealthConstants.HEADER_AUTHORIZATION) String authorization,
+			@RequestHeader(value = WealthConstants.HEADER_FORWARDED_FOR, required = false) String ip,
+			@RequestBody com.wealth.common.model.dto.people.CommentCreateRequestDto request);
+
+	@PostMapping(WealthConstants.BSS_PEOPLE_BASE + WealthConstants.PEOPLE_ENTRY_NOTE)
+	ResponseEntity<ApiResponse<com.wealth.common.model.dto.people.EntryNoteResultDto, Void>> peopleEntryNote(
+			@RequestHeader(WealthConstants.HEADER_AUTHORIZATION) String authorization,
+			@RequestHeader(value = WealthConstants.HEADER_FORWARDED_FOR, required = false) String ip,
+			@RequestBody com.wealth.common.model.dto.people.EntryNoteRequestDto request);
+
+	@PostMapping(WealthConstants.BSS_PEOPLE_BASE + WealthConstants.PEOPLE_REQUEST_DECIDE)
+	ResponseEntity<ApiResponse<com.wealth.common.model.dto.people.RequestDecideResultDto, Void>> peopleRequestDecide(
+			@RequestHeader(WealthConstants.HEADER_AUTHORIZATION) String authorization,
+			@RequestHeader(value = WealthConstants.HEADER_FORWARDED_FOR, required = false) String ip,
+			@RequestBody com.wealth.common.model.dto.people.RequestDecideRequestDto request);
+
+	@PostMapping(WealthConstants.BSS_LEND_VIEW_BASE + WealthConstants.LEND_VIEW_PAID)
+	ResponseEntity<ApiResponse<com.wealth.common.model.dto.people.LendPaidResultDto, Void>> lendPaid(
+			@RequestHeader(value = WealthConstants.HEADER_FORWARDED_FOR, required = false) String ip,
+			@RequestBody com.wealth.common.model.dto.people.LendPaidRequestDto request);
+
+	@PostMapping(WealthConstants.BSS_LEND_VIEW_BASE + WealthConstants.LEND_VIEW_REMARK)
+	ResponseEntity<ApiResponse<com.wealth.common.model.dto.people.LendRemarkResultDto, Void>> lendRemark(
+			@RequestHeader(value = WealthConstants.HEADER_FORWARDED_FOR, required = false) String ip,
+			@RequestBody com.wealth.common.model.dto.people.LendRemarkRequestDto request);
+
+	@PostMapping(WealthConstants.BSS_SMS_DEVICE_CREATE)
+	ResponseEntity<ApiResponse<com.wealth.common.model.dto.sms.SmsDeviceDto, Void>> smsDeviceCreate(
+			@RequestHeader(WealthConstants.HEADER_AUTHORIZATION) String authorization,
+			@RequestHeader(value = WealthConstants.HEADER_FORWARDED_FOR, required = false) String ip,
+			@RequestBody com.wealth.common.model.dto.sms.SmsDeviceCreateRequestDto request);
+
+	@PostMapping(WealthConstants.BSS_SMS_DEVICE_LIST)
+	ResponseEntity<ApiResponse<java.util.List<com.wealth.common.model.dto.sms.SmsDeviceDto>, Void>> smsDeviceList(
+			@RequestHeader(WealthConstants.HEADER_AUTHORIZATION) String authorization,
+			@RequestHeader(value = WealthConstants.HEADER_FORWARDED_FOR, required = false) String ip);
+
+	@PostMapping(WealthConstants.BSS_SMS_DEVICE_REVOKE)
+	ResponseEntity<ApiResponse<Boolean, Void>> smsDeviceRevoke(
+			@RequestHeader(WealthConstants.HEADER_AUTHORIZATION) String authorization,
+			@RequestHeader(value = WealthConstants.HEADER_FORWARDED_FOR, required = false) String ip,
+			@RequestBody com.wealth.common.model.dto.IdRequestDto request);
+
+	// Public: no token. Only the caller's address is passed on, for the BSS rate limit.
+	@PostMapping(WealthConstants.BSS_SMS_PUSH)
+	ResponseEntity<ApiResponse<com.wealth.common.model.dto.sms.SmsPushResultDto, Void>> smsPush(
+			@RequestHeader(value = WealthConstants.HEADER_FORWARDED_FOR, required = false) String ip,
+			@RequestBody com.wealth.common.model.dto.sms.SmsPushRequestDto request);
 
 	@PostMapping(WealthConstants.BSS_ACCOUNTS_BASE + WealthConstants.ACCOUNTS_CREATE)
 	ResponseEntity<ApiResponse<AccountDto, Void>> accountsCreate(
