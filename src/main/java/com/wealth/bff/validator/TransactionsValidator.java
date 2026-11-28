@@ -19,6 +19,7 @@ public final class TransactionsValidator {
 		}
 		if ((request.getSize() != null && (request.getSize() < 1 || request.getSize() > WealthConstants.TRANSACTION_PAGE_MAX)) || tooLong(request.getQ(), WealthConstants.TRANSACTION_SEARCH_MAX_LENGTH)
 				|| tooLong(request.getCursor(), WealthConstants.TRANSACTION_CURSOR_MAX_LENGTH) || tooLong(request.getKind(), WealthConstants.TRANSACTION_KIND_MAX_LENGTH)
+				|| tooLong(request.getCategory(), WealthConstants.TRANSACTION_CATEGORY_MAX_LENGTH * 2)
 				|| tooLong(request.getAccountId(), WealthConstants.USAGE_USER_ID_LENGTH) || tooLong(request.getFrom(), WealthConstants.TRANSACTION_DAY_LENGTH)
 				|| tooLong(request.getTo(), WealthConstants.TRANSACTION_DAY_LENGTH)) {
 			throw new KarthiException(BaseError.INVALID_REQUEST);

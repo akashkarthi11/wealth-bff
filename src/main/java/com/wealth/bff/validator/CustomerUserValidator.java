@@ -6,6 +6,8 @@ import com.wealth.bff.constants.WealthConstants;
 import com.wealth.common.generic.BaseError;
 import com.wealth.common.generic.KarthiException;
 import com.wealth.common.model.dto.customer.LoginRequestDto;
+import com.wealth.common.model.dto.customer.PasswordChangeRequestDto;
+import com.wealth.common.model.dto.customer.ProfileSaveRequestDto;
 import com.wealth.common.model.dto.customer.PasswordResetRequestDto;
 import com.wealth.common.model.dto.customer.RegisterRequestDto;
 
@@ -33,6 +35,25 @@ public final class CustomerUserValidator {
 		requireBody(request);
 		validateEmail(request.getEmail());
 		validatePassword(request.getNewPassword());
+	}
+
+	// Edge checks: lengths and no control characters; the BSS checks the values themselves (mobile shape, date format, menu key) again.
+	public static void validateProfile(ProfileSaveRequestDto request) {
+		requireBody(request);
+		if (!fine(request.getDisplayName(), WealthConstants.PROFILE_NAME_EDGE_MAX) || !fine(request.getMobile(), WealthConstants.PROFILE_MOBILE_EDGE_MAX)
+				|| !fine(request.getDateFormat(), WealthConstants.PROFILE_CODE_EDGE_MAX) || !fine(request.getHomeScreen(), WealthConstants.PROFILE_CODE_EDGE_MAX)) {
+			throw new KarthiException(BaseError.INVALID_REQUEST);
+		}
+	}
+
+	public static void validatePasswordChange(PasswordChangeRequestDto request) {
+		requireBody(request);
+		validatePassword(request.getCurrentPassword());
+		validatePassword(request.getNewPassword());
+	}
+
+	private static boolean fine(String value, int max) {
+		return value == null || (value.length() <= max && value.chars().noneMatch(c -> c < ' ' || c == 127));
 	}
 
 	private static void requireBody(Object request) {

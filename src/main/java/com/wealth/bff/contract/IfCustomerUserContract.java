@@ -11,6 +11,8 @@ import com.wealth.common.generic.ApiResponse;
 import com.wealth.common.generic.KarthiException;
 import com.wealth.common.model.dto.customer.LoginRequestDto;
 import com.wealth.common.model.dto.customer.LoginResponseDto;
+import com.wealth.common.model.dto.customer.PasswordChangeRequestDto;
+import com.wealth.common.model.dto.customer.ProfileSaveRequestDto;
 import com.wealth.common.model.dto.customer.PasswordResetRequestDto;
 import com.wealth.common.model.dto.customer.RegisterRequestDto;
 import com.wealth.common.model.dto.customer.UserDto;
@@ -35,6 +37,18 @@ public interface IfCustomerUserContract {
 	@PostMapping(WealthConstants.LOGOUT)
 	ResponseEntity<ApiResponse<Boolean, Void>> logout(
 			@RequestHeader(WealthConstants.HEADER_AUTHORIZATION) String authorization) throws KarthiException;
+
+	// The signed-in user's own profile details.
+	@PostMapping(WealthConstants.PROFILE_SAVE)
+	ResponseEntity<ApiResponse<UserDto, Void>> profileSave(
+			@RequestHeader(WealthConstants.HEADER_AUTHORIZATION) String authorization,
+			@RequestBody ProfileSaveRequestDto request) throws KarthiException;
+
+	// The signed-in user changes their own password; every older session of theirs ends.
+	@PostMapping(WealthConstants.PASSWORD_CHANGE)
+	ResponseEntity<ApiResponse<Boolean, Void>> changePassword(
+			@RequestHeader(WealthConstants.HEADER_AUTHORIZATION) String authorization,
+			@RequestBody PasswordChangeRequestDto request) throws KarthiException;
 
 	// Admin only, decided in the BSS.
 	@PostMapping(WealthConstants.PASSWORD_RESET)

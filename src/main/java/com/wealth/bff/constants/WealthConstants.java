@@ -23,6 +23,11 @@ public final class WealthConstants {
 	public static final String ME = "/me";
 	public static final String LOGOUT = "/logout";
 	public static final String PASSWORD_RESET = "/password/reset";
+	public static final String PROFILE_SAVE = "/profile/save";
+	public static final String PASSWORD_CHANGE = "/password/change";
+	public static final int PROFILE_NAME_EDGE_MAX = 60;
+	public static final int PROFILE_MOBILE_EDGE_MAX = 20;
+	public static final int PROFILE_CODE_EDGE_MAX = 40;
 
 	// Admin module: BFF paths, the BSS paths they call, and the action paths (same on both).
 	public static final String ADMIN_BASE = API_BASE + "/admin";
@@ -63,15 +68,15 @@ public final class WealthConstants {
 	public static final String ENV_POSTGRES_UPDATE = "/postgres/update";
 	public static final String ENV_POSTGRES_RESET = "/postgres/reset";
 	public static final String ENV_ADDRESS_SAVE = "/address/save";
+	public static final String ENV_SIGNUP_GET = "/signup/get";
+	public static final String ENV_SIGNUP_UPDATE = "/signup/update";
+	public static final String ENV_SIGNUP_CLOSE = "/signup/close";
+	public static final String ENV_SIGNUP_RESET = "/signup/reset";
 	public static final String MENUS_BASE = API_BASE + "/menus";
 	public static final String BSS_MENUS_BASE = "/wealth-service/api/v1/menus";
 	public static final String MENUS_LIST = "/list";
 	public static final String API_USAGE_BASE = API_BASE + "/advisor/api-usage";
 	public static final String BSS_API_USAGE_BASE = "/wealth-service/api/v1/advisor/api-usage";
-	public static final String ENV_SIGNUP_GET = "/signup/get";
-	public static final String ENV_SIGNUP_UPDATE = "/signup/update";
-	public static final String ENV_SIGNUP_CLOSE = "/signup/close";
-	public static final String ENV_SIGNUP_RESET = "/signup/reset";
 	public static final String API_USAGE_LIST = "/list";
 	public static final int API_USAGE_DAYS_MAX = 30;
 	public static final String BSS_INTERNAL_USAGE_BASE = "/wealth-service/api/v1/internal/usage";
@@ -101,15 +106,6 @@ public final class WealthConstants {
 	public static final int CONNECTION_URL_MAX_LENGTH = 200;
 	public static final int CONNECTION_PROBE_TIMEOUT_SECONDS = 5;
 	public static final String ROLE_ADMIN = "admin";
-
-	public static final String FINVU_AA_BASE = API_BASE + "/aa/finvu";
-	public static final String BSS_FINVU_AA_BASE = "/wealth-service/api/v1/aa/finvu";
-	public static final String FINVU_AA_CONFIG = "/config";
-	public static final String FINVU_AA_CONSENT_REQUEST = "/consent/request";
-	public static final String FINVU_AA_CONSENT_STATUS = "/consent/status";
-	public static final String FINVU_AA_FI_REQUEST = "/fi/request";
-	public static final String FINVU_AA_FI_STATUS = "/fi/status";
-	public static final String FINVU_AA_FI_FETCH = "/fi/fetch";
 
 	public static final String ACCOUNTS_BASE = API_BASE + "/accounts";
 	public static final String BSS_ACCOUNTS_BASE = "/wealth-service/api/v1/accounts";
@@ -157,6 +153,12 @@ public final class WealthConstants {
 	public static final String BSS_PEOPLE_BASE = "/wealth-service/api/v1/people";
 	public static final String PEOPLE_LIST = "/list";
 	public static final String PEOPLE_REFRESH = "/refresh";
+	public static final String PEOPLE_SPLIT_CREATE = "/splits/create";
+	public static final String PEOPLE_SPLIT_CANCEL = "/splits/cancel";
+	public static final int PEOPLE_SPLIT_MAX_PEOPLE = 50;
+	public static final int PEOPLE_NAME_MAX_LENGTH = 80;
+	public static final int PEOPLE_NOTE_MAX_LENGTH = 300;
+	public static final int PEOPLE_MODE_MAX_LENGTH = 10;
 
 	// Gmail connection (each user's own mailbox; the Google client is set by an admin). Same action paths on the BFF and the BSS.
 	public static final String BROKER_BASE = API_BASE + "/broker";

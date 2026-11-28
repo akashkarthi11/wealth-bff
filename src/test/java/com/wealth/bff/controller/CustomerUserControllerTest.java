@@ -84,4 +84,30 @@ class CustomerUserControllerTest {
 		assertThrows(KarthiException.class, () -> controller.resetPassword("Bearer abc", bad));
 		verify(feign, never()).resetPassword(any(), any(), any());
 	}
+
+	@Test
+	void theProfileAndAPasswordChangeAreCheckedAtTheEdgeThenForwardedWithTheToken() {
+		when(feign.profileSave(any(), any(), any())).thenReturn(org.springframework.http.ResponseEntity.ok(new com.wealth.common.generic.ApiResponse<>()));
+		when(feign.changePassword(any(), any(), any())).thenReturn(org.springframework.http.ResponseEntity.ok(new com.wealth.common.generic.ApiResponse<>()));
+		com.wealth.common.model.dto.customer.ProfileSaveRequestDto profile = new com.wealth.common.model.dto.customer.ProfileSaveRequestDto();
+		profile.setDisplayName("Karthi");
+		profile.setMobile("+91 98765 43210");
+		controller.profileSave("Bearer t", profile);
+		org.mockito.Mockito.verify(feign).profileSave("Bearer t", "203.0.113.5", profile);
+		profile.setDisplayName("x".repeat(61));
+		org.junit.jupiter.api.Assertions.assertThrows(com.wealth.common.generic.KarthiException.class, () -> controller.profileSave("Bearer t", profile));
+		profile.setDisplayName("a\nb");
+		org.junit.jupiter.api.Assertions.assertThrows(com.wealth.common.generic.KarthiException.class, () -> controller.profileSave("Bearer t", profile));
+		org.junit.jupiter.api.Assertions.assertThrows(com.wealth.common.generic.KarthiException.class, () -> controller.profileSave("Bearer t", null));
+
+		com.wealth.common.model.dto.customer.PasswordChangeRequestDto change = new com.wealth.common.model.dto.customer.PasswordChangeRequestDto();
+		change.setCurrentPassword("current-password-1");
+		change.setNewPassword("another-long-password");
+		controller.changePassword("Bearer t", change);
+		org.mockito.Mockito.verify(feign).changePassword("Bearer t", "203.0.113.5", change);
+		change.setNewPassword("");
+		org.junit.jupiter.api.Assertions.assertThrows(com.wealth.common.generic.KarthiException.class, () -> controller.changePassword("Bearer t", change));
+		change.setNewPassword("p".repeat(201));
+		org.junit.jupiter.api.Assertions.assertThrows(com.wealth.common.generic.KarthiException.class, () -> controller.changePassword("Bearer t", change));
+	}
 }

@@ -72,6 +72,8 @@ import com.wealth.common.model.dto.admin.RolesOverviewDto;
 import com.wealth.common.model.dto.admin.SnapshotDto;
 import com.wealth.common.model.dto.customer.LoginRequestDto;
 import com.wealth.common.model.dto.customer.LoginResponseDto;
+import com.wealth.common.model.dto.customer.PasswordChangeRequestDto;
+import com.wealth.common.model.dto.customer.ProfileSaveRequestDto;
 import com.wealth.common.model.dto.customer.PasswordResetRequestDto;
 import com.wealth.common.model.dto.customer.RegisterRequestDto;
 import com.wealth.common.model.dto.customer.UserDto;
@@ -102,6 +104,18 @@ public interface WealthFeignClient {
 	ResponseEntity<ApiResponse<Boolean, Void>> logout(
 			@RequestHeader(WealthConstants.HEADER_AUTHORIZATION) String authorization,
 			@RequestHeader(value = WealthConstants.HEADER_FORWARDED_FOR, required = false) String ip);
+
+	@PostMapping(WealthConstants.BSS_USERS_BASE + WealthConstants.PROFILE_SAVE)
+	ResponseEntity<ApiResponse<UserDto, Void>> profileSave(
+			@RequestHeader(WealthConstants.HEADER_AUTHORIZATION) String authorization,
+			@RequestHeader(value = WealthConstants.HEADER_FORWARDED_FOR, required = false) String ip,
+			@RequestBody ProfileSaveRequestDto request);
+
+	@PostMapping(WealthConstants.BSS_USERS_BASE + WealthConstants.PASSWORD_CHANGE)
+	ResponseEntity<ApiResponse<Boolean, Void>> changePassword(
+			@RequestHeader(WealthConstants.HEADER_AUTHORIZATION) String authorization,
+			@RequestHeader(value = WealthConstants.HEADER_FORWARDED_FOR, required = false) String ip,
+			@RequestBody PasswordChangeRequestDto request);
 
 	@PostMapping(WealthConstants.BSS_USERS_BASE + WealthConstants.PASSWORD_RESET)
 	ResponseEntity<ApiResponse<Boolean, Void>> resetPassword(
@@ -191,20 +205,6 @@ public interface WealthFeignClient {
 			@RequestHeader(WealthConstants.HEADER_AUTHORIZATION) String authorization,
 			@RequestHeader(value = WealthConstants.HEADER_FORWARDED_FOR, required = false) String ip, @RequestBody ConnectionRequestDto request);
 
-	// Service to service: no user token, the shared service key instead.
-	@PostMapping(WealthConstants.BSS_INTERNAL_SETTINGS_BASE + WealthConstants.INTERNAL_PICK)
-	ResponseEntity<ApiResponse<ConnectionDto, Void>> internalSettingsPick(
-			@RequestHeader(value = WealthConstants.HEADER_SERVICE_KEY, required = false) String serviceKey, @RequestBody ConnectionRequestDto request);
-
-	// Service to service: the BFF reports its API usage counts to the BSS (shared service key, no user token).
-	@PostMapping(WealthConstants.BSS_INTERNAL_USAGE_BASE + WealthConstants.INTERNAL_USAGE_RECORD)
-	ResponseEntity<ApiResponse<Integer, Void>> internalUsageRecord(
-			@RequestHeader(value = WealthConstants.HEADER_SERVICE_KEY, required = false) String serviceKey, @RequestBody UsageBatchDto batch);
-
-	@PostMapping(WealthConstants.BSS_ADMIN_BASE + WealthConstants.ROLES_CREATE)
-	ResponseEntity<ApiResponse<RoleDto, Void>> adminCreateRole(
-			@RequestHeader(WealthConstants.HEADER_AUTHORIZATION) String authorization,
-			@RequestHeader(value = WealthConstants.HEADER_FORWARDED_FOR, required = false) String ip, @RequestBody RoleCreateRequestDto request);
 	@PostMapping(WealthConstants.BSS_ENVIRONMENT_BASE + WealthConstants.ENV_SIGNUP_GET)
 	ResponseEntity<ApiResponse<ConnectionDto, Void>> environmentSignupGet(
 			@RequestHeader(WealthConstants.HEADER_AUTHORIZATION) String authorization,
@@ -225,6 +225,20 @@ public interface WealthFeignClient {
 			@RequestHeader(WealthConstants.HEADER_AUTHORIZATION) String authorization,
 			@RequestHeader(value = WealthConstants.HEADER_FORWARDED_FOR, required = false) String ip);
 
+	// Service to service: no user token, the shared service key instead.
+	@PostMapping(WealthConstants.BSS_INTERNAL_SETTINGS_BASE + WealthConstants.INTERNAL_PICK)
+	ResponseEntity<ApiResponse<ConnectionDto, Void>> internalSettingsPick(
+			@RequestHeader(value = WealthConstants.HEADER_SERVICE_KEY, required = false) String serviceKey, @RequestBody ConnectionRequestDto request);
+
+	// Service to service: the BFF reports its API usage counts to the BSS (shared service key, no user token).
+	@PostMapping(WealthConstants.BSS_INTERNAL_USAGE_BASE + WealthConstants.INTERNAL_USAGE_RECORD)
+	ResponseEntity<ApiResponse<Integer, Void>> internalUsageRecord(
+			@RequestHeader(value = WealthConstants.HEADER_SERVICE_KEY, required = false) String serviceKey, @RequestBody UsageBatchDto batch);
+
+	@PostMapping(WealthConstants.BSS_ADMIN_BASE + WealthConstants.ROLES_CREATE)
+	ResponseEntity<ApiResponse<RoleDto, Void>> adminCreateRole(
+			@RequestHeader(WealthConstants.HEADER_AUTHORIZATION) String authorization,
+			@RequestHeader(value = WealthConstants.HEADER_FORWARDED_FOR, required = false) String ip, @RequestBody RoleCreateRequestDto request);
 
 	@PostMapping(WealthConstants.BSS_ADMIN_BASE + WealthConstants.USERS_LIST)
 	ResponseEntity<ApiResponse<List<UserAccessDto>, Void>> adminUsersList(
@@ -458,6 +472,18 @@ public interface WealthFeignClient {
 			@RequestHeader(WealthConstants.HEADER_AUTHORIZATION) String authorization,
 			@RequestHeader(value = WealthConstants.HEADER_FORWARDED_FOR, required = false) String ip);
 
+	@PostMapping(WealthConstants.BSS_PEOPLE_BASE + WealthConstants.PEOPLE_SPLIT_CREATE)
+	ResponseEntity<ApiResponse<com.wealth.common.model.dto.people.BillSplitDto, Void>> peopleSplitCreate(
+			@RequestHeader(WealthConstants.HEADER_AUTHORIZATION) String authorization,
+			@RequestHeader(value = WealthConstants.HEADER_FORWARDED_FOR, required = false) String ip,
+			@RequestBody com.wealth.common.model.dto.people.SplitCreateRequestDto request);
+
+	@PostMapping(WealthConstants.BSS_PEOPLE_BASE + WealthConstants.PEOPLE_SPLIT_CANCEL)
+	ResponseEntity<ApiResponse<Boolean, Void>> peopleSplitCancel(
+			@RequestHeader(WealthConstants.HEADER_AUTHORIZATION) String authorization,
+			@RequestHeader(value = WealthConstants.HEADER_FORWARDED_FOR, required = false) String ip,
+			@RequestBody com.wealth.common.model.dto.IdRequestDto request);
+
 	@PostMapping(WealthConstants.BSS_ACCOUNTS_BASE + WealthConstants.ACCOUNTS_CREATE)
 	ResponseEntity<ApiResponse<AccountDto, Void>> accountsCreate(
 			@RequestHeader(WealthConstants.HEADER_AUTHORIZATION) String authorization,
@@ -532,39 +558,4 @@ public interface WealthFeignClient {
 			@RequestHeader(WealthConstants.HEADER_AUTHORIZATION) String authorization,
 			@RequestHeader(value = WealthConstants.HEADER_FORWARDED_FOR, required = false) String ip,
 			@RequestBody AccountIdRequestDto request);
-	@PostMapping(WealthConstants.BSS_FINVU_AA_BASE + WealthConstants.FINVU_AA_CONFIG)
-	ResponseEntity<ApiResponse<Map<String, Object>, Void>> finvuConfiguration(
-			@RequestHeader(WealthConstants.HEADER_AUTHORIZATION) String authorization,
-			@RequestHeader(value = WealthConstants.HEADER_FORWARDED_FOR, required = false) String ip);
-
-	@PostMapping(WealthConstants.BSS_FINVU_AA_BASE + WealthConstants.FINVU_AA_CONSENT_REQUEST)
-	ResponseEntity<ApiResponse<Map<String, Object>, Void>> finvuConsentRequest(
-			@RequestHeader(WealthConstants.HEADER_AUTHORIZATION) String authorization,
-			@RequestHeader(value = WealthConstants.HEADER_FORWARDED_FOR, required = false) String ip,
-			@RequestBody Map<String, Object> request);
-
-	@PostMapping(WealthConstants.BSS_FINVU_AA_BASE + WealthConstants.FINVU_AA_CONSENT_STATUS)
-	ResponseEntity<ApiResponse<Map<String, Object>, Void>> finvuConsentStatus(
-			@RequestHeader(WealthConstants.HEADER_AUTHORIZATION) String authorization,
-			@RequestHeader(value = WealthConstants.HEADER_FORWARDED_FOR, required = false) String ip,
-			@RequestBody Map<String, Object> request);
-
-	@PostMapping(WealthConstants.BSS_FINVU_AA_BASE + WealthConstants.FINVU_AA_FI_REQUEST)
-	ResponseEntity<ApiResponse<Map<String, Object>, Void>> finvuFiRequest(
-			@RequestHeader(WealthConstants.HEADER_AUTHORIZATION) String authorization,
-			@RequestHeader(value = WealthConstants.HEADER_FORWARDED_FOR, required = false) String ip,
-			@RequestBody Map<String, Object> request);
-
-	@PostMapping(WealthConstants.BSS_FINVU_AA_BASE + WealthConstants.FINVU_AA_FI_STATUS)
-	ResponseEntity<ApiResponse<Map<String, Object>, Void>> finvuFiStatus(
-			@RequestHeader(WealthConstants.HEADER_AUTHORIZATION) String authorization,
-			@RequestHeader(value = WealthConstants.HEADER_FORWARDED_FOR, required = false) String ip,
-			@RequestBody Map<String, Object> request);
-
-	@PostMapping(WealthConstants.BSS_FINVU_AA_BASE + WealthConstants.FINVU_AA_FI_FETCH)
-	ResponseEntity<ApiResponse<Map<String, Object>, Void>> finvuFiFetch(
-			@RequestHeader(WealthConstants.HEADER_AUTHORIZATION) String authorization,
-			@RequestHeader(value = WealthConstants.HEADER_FORWARDED_FOR, required = false) String ip,
-			@RequestBody Map<String, Object> request);
-
 }

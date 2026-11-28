@@ -11,6 +11,8 @@ import com.wealth.common.generic.KarthiException;
 import com.wealth.common.logger.KarthiLogger;
 import com.wealth.common.model.dto.customer.LoginRequestDto;
 import com.wealth.common.model.dto.customer.LoginResponseDto;
+import com.wealth.common.model.dto.customer.PasswordChangeRequestDto;
+import com.wealth.common.model.dto.customer.ProfileSaveRequestDto;
 import com.wealth.common.model.dto.customer.PasswordResetRequestDto;
 import com.wealth.common.model.dto.customer.RegisterRequestDto;
 import com.wealth.common.model.dto.customer.UserDto;
@@ -52,6 +54,20 @@ public class CustomerUserController extends WealthBaseController implements IfCu
 	public ResponseEntity<ApiResponse<Boolean, Void>> logout(String authorization) throws KarthiException {
 		LOGGER.info("Entering logout BFF");
 		return handleResponse(feignClient.logout(authorization, RequestHeaderUtil.getIp()));
+	}
+
+	@Override
+	public ResponseEntity<ApiResponse<UserDto, Void>> profileSave(String authorization, ProfileSaveRequestDto request) throws KarthiException {
+		LOGGER.info("Entering profileSave BFF");
+		CustomerUserValidator.validateProfile(request);
+		return handleResponse(feignClient.profileSave(authorization, RequestHeaderUtil.getIp(), request));
+	}
+
+	@Override
+	public ResponseEntity<ApiResponse<Boolean, Void>> changePassword(String authorization, PasswordChangeRequestDto request) throws KarthiException {
+		LOGGER.info("Entering changePassword BFF");
+		CustomerUserValidator.validatePasswordChange(request);
+		return handleResponse(feignClient.changePassword(authorization, RequestHeaderUtil.getIp(), request));
 	}
 
 	@Override
