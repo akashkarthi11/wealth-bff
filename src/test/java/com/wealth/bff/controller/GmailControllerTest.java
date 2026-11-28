@@ -329,6 +329,17 @@ class GmailControllerTest {
 	}
 
 	@Test
+	void aStatementRowCarriesItsFileDate() {
+		GmailStatementRowDto row = new GmailStatementRowDto();
+		row.setReceivedAt(java.sql.Timestamp.valueOf("2026-11-27 18:28:00"));
+		ApiResponse<List<GmailStatementRowDto>, Void> rows = new ApiResponse<>();
+		rows.setData(List.of(row));
+		when(feign.gmailStatementList("Bearer t", "203.0.113.5")).thenReturn(ResponseEntity.ok(rows));
+
+		assertEquals(row.getReceivedAt(), controller.statementList("Bearer t").getBody().getData().get(0).getReceivedAt());
+	}
+
+	@Test
 	void theStatementPasswordsAreCheckedAtTheEdgeThenForwardedAndBlankOnesAreAllowed() {
 		ApiResponse<GmailStatusDto, Void> body = new ApiResponse<>();
 		GmailStatementSettingsRequestDto both = passwords("ABCDE1234F", "01011990");
