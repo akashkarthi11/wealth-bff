@@ -27,11 +27,14 @@ public final class SmsValidator {
 	}
 
 	// A wrong token shape gets the same refusal as an unknown token.
-	public static void validatePush(SmsPushRequestDto request) {
-		String token = request == null ? null : request.getToken();
+	public static void validateToken(String token) {
 		if (token == null || token.length() > WealthConstants.SMS_TOKEN_MAX_LENGTH || !token.matches("[A-Za-z0-9_-]+")) {
 			throw new KarthiException(BaseError.SMS_TOKEN_INVALID);
 		}
+	}
+
+	public static void validatePush(SmsPushRequestDto request) {
+		validateToken(request == null ? null : request.getToken());
 		if (request.getMessages() == null || request.getMessages().isEmpty() || request.getMessages().size() > WealthConstants.SMS_PUSH_MAX) {
 			throw new KarthiException(BaseError.SMS_PUSH_INVALID);
 		}

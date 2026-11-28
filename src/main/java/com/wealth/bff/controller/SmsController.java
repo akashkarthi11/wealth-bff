@@ -16,6 +16,7 @@ import com.wealth.common.model.dto.sms.SmsDeviceCreateRequestDto;
 import com.wealth.common.model.dto.sms.SmsDeviceDto;
 import com.wealth.common.model.dto.sms.SmsPushRequestDto;
 import com.wealth.common.model.dto.sms.SmsPushResultDto;
+import com.wealth.common.model.dto.sms.SmsTokenRequestDto;
 import com.wealth.common.utils.generic.RequestHeaderUtil;
 
 @RestController
@@ -54,5 +55,12 @@ public class SmsController extends WealthBaseController implements IfSmsContract
 		LOGGER.info("Entering sms push BFF");
 		SmsValidator.validatePush(request);
 		return handleResponse(feignClient.smsPush(RequestHeaderUtil.getIp(), request));
+	}
+
+	@Override
+	public ResponseEntity<ApiResponse<List<String>, Void>> banks(SmsTokenRequestDto request) throws KarthiException {
+		LOGGER.info("Entering sms banks BFF");
+		SmsValidator.validateToken(request == null ? null : request.getToken());
+		return handleResponse(feignClient.smsBanks(RequestHeaderUtil.getIp(), request));
 	}
 }

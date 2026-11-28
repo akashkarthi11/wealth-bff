@@ -600,6 +600,12 @@ public interface WealthFeignClient {
 			@RequestHeader(value = WealthConstants.HEADER_FORWARDED_FOR, required = false) String ip,
 			@RequestBody com.wealth.common.model.dto.sms.SmsPushRequestDto request);
 
+	// Public: no token. The bank names of the phone owner's accounts, for the app's sender list.
+	@PostMapping(WealthConstants.BSS_SMS_BANKS)
+	ResponseEntity<ApiResponse<List<String>, Void>> smsBanks(
+			@RequestHeader(value = WealthConstants.HEADER_FORWARDED_FOR, required = false) String ip,
+			@RequestBody com.wealth.common.model.dto.sms.SmsTokenRequestDto request);
+
 	@PostMapping(WealthConstants.BSS_ACCOUNTS_BASE + WealthConstants.ACCOUNTS_CREATE)
 	ResponseEntity<ApiResponse<AccountDto, Void>> accountsCreate(
 			@RequestHeader(WealthConstants.HEADER_AUTHORIZATION) String authorization,

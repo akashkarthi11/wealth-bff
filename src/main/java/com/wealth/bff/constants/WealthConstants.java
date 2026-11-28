@@ -185,6 +185,8 @@ public final class WealthConstants {
 	public static final String SMS_DEVICE_LIST = API_BASE + "/sms/device/list";
 	public static final String SMS_DEVICE_REVOKE = API_BASE + "/sms/device/revoke";
 	public static final String SMS_PUSH = API_BASE + "/sms-ingest/push";
+	public static final String SMS_BANKS = API_BASE + "/sms-ingest/banks";
+	public static final String BSS_SMS_BANKS = "/wealth-service/api/v1/sms-ingest/banks";
 	public static final String BSS_SMS_DEVICE_CREATE = "/wealth-service/api/v1/sms/device/create";
 	public static final String BSS_SMS_DEVICE_LIST = "/wealth-service/api/v1/sms/device/list";
 	public static final String BSS_SMS_DEVICE_REVOKE = "/wealth-service/api/v1/sms/device/revoke";

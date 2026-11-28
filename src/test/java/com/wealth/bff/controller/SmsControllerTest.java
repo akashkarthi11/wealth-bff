@@ -23,6 +23,7 @@ import com.wealth.common.model.dto.sms.SmsDeviceCreateRequestDto;
 import com.wealth.common.model.dto.sms.SmsMessageDto;
 import com.wealth.common.model.dto.sms.SmsPushRequestDto;
 import com.wealth.common.model.dto.sms.SmsPushResultDto;
+import com.wealth.common.model.dto.sms.SmsTokenRequestDto;
 import com.wealth.common.utils.generic.RequestHeaderUtil;
 
 class SmsControllerTest {
@@ -58,6 +59,23 @@ class SmsControllerTest {
 		when(feign.smsPush("203.0.113.5", request)).thenReturn(ResponseEntity.ok(body));
 
 		assertEquals(body, new SmsController(feign).push(request).getBody());
+	}
+
+	@Test
+	void theBankListIsForwardedWithTheCallersAddressAndNeedsATokenShape() {
+		WealthFeignClient feign = mock(WealthFeignClient.class);
+		RequestHeaderUtil.setIp("203.0.113.5");
+		SmsTokenRequestDto request = new SmsTokenRequestDto();
+		request.setToken(TOKEN);
+		ApiResponse<List<String>, Void> body = new ApiResponse<>();
+		when(feign.smsBanks("203.0.113.5", request)).thenReturn(ResponseEntity.ok(body));
+		SmsController controller = new SmsController(feign);
+
+		assertEquals(body, controller.banks(request).getBody());
+		request.setToken("bad token!");
+		assertEquals(BaseError.SMS_TOKEN_INVALID, assertThrows(KarthiException.class, () -> controller.banks(request)).getMessage());
+		assertEquals(BaseError.SMS_TOKEN_INVALID, assertThrows(KarthiException.class, () -> controller.banks(null)).getMessage());
+		verify(feign).smsBanks(any(), any(SmsTokenRequestDto.class));
 	}
 
 	@Test
